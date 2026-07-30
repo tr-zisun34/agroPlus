@@ -1,0 +1,74 @@
+<h2 class="sr-only">Add farm modal with fields for farm name, location, district, area, soil type, water availability, budget, and target season</h2>
+<div style="min-height:520px;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;padding:1rem;border-radius:12px;">
+  <div style="width:100%;max-width:340px;background:var(--surface-2);border-radius:16px;padding:1.25rem;max-height:480px;overflow-y:auto;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <p style="font-size:17px;font-weight:500;margin:0;">Add farm</p>
+      <button aria-label="Close" style="width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;"><i class="ti ti-x" style="font-size:16px;color:var(--text-secondary);" aria-hidden="true"></i></button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">Farm name</label>
+        <input type="text" placeholder="Green valley farm" style="width:100%;" />
+      </div>
+
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">Location</label>
+        <input type="text" placeholder="Near Teesta canal, Kaunia" style="width:100%;" />
+      </div>
+
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">District</label>
+        <select style="width:100%;">
+          <option>Rangpur</option>
+          <option>Dinajpur</option>
+          <option>Bogura</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">Area (acres)</label>
+        <input type="number" placeholder="4.0" style="width:100%;" />
+      </div>
+
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">Soil type</label>
+        <select style="width:100%;">
+          <option>Clay</option>
+          <option>Loamy</option>
+          <option>Sandy</option>
+          <option>Silty</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">Water availability</label>
+        <select style="width:100%;">
+          <option>Irrigated</option>
+          <option>Rain-fed</option>
+          <option>Limited</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">Budget (BDT)</label>
+        <input type="number" placeholder="50000" style="width:100%;" />
+      </div>
+
+      <div>
+        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:4px;">Target season</label>
+        <select style="width:100%;">
+          <option>Rabi</option>
+          <option>Aus</option>
+          <option>Aman</option>
+        </select>
+      </div>
+    </div>
+
+    <button style="width:100%;background:var(--fill-success);color:var(--on-success);border:none;border-radius:var(--radius);padding:0.75rem;font-size:14px;font-weight:500;margin-top:1.25rem;cursor:pointer;">
+      Add farm
+    </button>
+
+  </div>
+</div>

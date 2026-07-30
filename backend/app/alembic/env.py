@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 
 from app.core.config import settings  # noqa: E402
 from app.db.base import Base  # noqa: E402
+from app.models.farmer import Farmer  # noqa: E402,F401 (registers model on Base.metadata)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
