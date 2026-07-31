@@ -8,3 +8,9 @@ psycopg2-binary
 pydantic-settings
 pydantic[email]
 python-multipart
+httpx
+numpy
+pandas
+scikit-learn
+xgboost
+joblib

@@ -160,4 +160,157 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageToggleTooltip => 'Switch language';
+
+  @override
+  String get farmProfileTitle => 'Farm profile';
+
+  @override
+  String get liveConditionsTitle => 'Live conditions';
+
+  @override
+  String get recommendationTitle => 'Recommendation';
+
+  @override
+  String get temperatureLabel => 'Temperature';
+
+  @override
+  String get humidityLabel => 'Humidity';
+
+  @override
+  String get rainfallLabel => 'Rainfall';
+
+  @override
+  String get refreshTooltip => 'Refresh';
+
+  @override
+  String lastUpdatedLabel(String time) {
+    return 'Last updated: $time';
+  }
+
+  @override
+  String minutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count min ago',
+      one: '$count min ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get conditionsLoadError => 'Could not load live conditions.';
+
+  @override
+  String get farmDetailLoadError => 'Could not load farm details.';
+
+  @override
+  String get recommendationLoadError => 'Could not load your recommendation.';
+
+  @override
+  String get savePointError => 'Could not save this point. Please try again.';
+
+  @override
+  String get comingSoonMessage => 'This feature is coming soon';
+
+  @override
+  String get soilReadingTitle => 'Soil reading';
+
+  @override
+  String get addPointTitle => 'Add point';
+
+  @override
+  String get editPointTitle => 'Edit point';
+
+  @override
+  String get nitrogenLabel => 'Nitrogen (N)';
+
+  @override
+  String get phosphorusLabel => 'Phosphorus (P)';
+
+  @override
+  String get potassiumLabel => 'Potassium (K)';
+
+  @override
+  String get phLabel => 'pH';
+
+  @override
+  String get savePointButton => 'Save';
+
+  @override
+  String get compositePendingMessage =>
+      'Add the remaining points to see your composite reading';
+
+  @override
+  String get centerPointLabel => 'Center';
+
+  @override
+  String cornerPointLabel(int number) {
+    return 'Corner $number';
+  }
+
+  @override
+  String quadrantPointLabel(int number) {
+    return 'Quadrant $number';
+  }
+
+  @override
+  String get recommendationDisabledHint =>
+      'Add a soil reading below to unlock your recommendation';
+
+  @override
+  String get recommendationPipelinePendingMessage =>
+      'Could not generate a recommendation yet — try re-saving a point';
+
+  @override
+  String get bestCropsButton => 'Best crops for my farm';
+
+  @override
+  String get confidenceLabel => 'Confidence';
+
+  @override
+  String get yieldEstimateLabel => 'Yield estimate';
+
+  @override
+  String get netProfitLabel => 'Net profit';
+
+  @override
+  String get profitComingSoonNote => 'Profit estimate coming soon';
+
+  @override
+  String get chatWithAgentButton => 'Chat with agent';
+
+  @override
+  String get farmPickerTitle => 'Chat about which farm?';
+
+  @override
+  String get farmPickerSubtitle =>
+      'The assistant will use this farm\'s soil and weather data.';
+
+  @override
+  String get farmAssistantTitle => 'Farm assistant';
+
+  @override
+  String chatGreeting(String farmName) {
+    return 'Hi, I\'m your farm assistant for $farmName. Ask me anything about your soil, weather, or what to plant this season.';
+  }
+
+  @override
+  String get quickChipProfit => 'Show profit breakdown';
+
+  @override
+  String get quickChipSoil => 'Check soil condition';
+
+  @override
+  String get quickChipCrop => 'Suggest another crop';
+
+  @override
+  String get messageInputHint => 'Type a message';
+
+  @override
+  String get sendTooltip => 'Send';
+
+  @override
+  String get placeholderAgentReply =>
+      'Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply.';
 }

@@ -8,13 +8,22 @@ from app.db.session import get_db
 from app.models.district import District
 from app.models.farm import Farm
 from app.models.farmer import Farmer
+from app.models.recommendation import Recommendation
 from app.schemas.district import DistrictOut
-from app.schemas.farm import FarmCreate, FarmOut, FarmUpdate
+from app.schemas.farm import ConditionsOut, FarmCreate, FarmOut, FarmUpdate
+from app.services.weather_service import WeatherServiceError, fetch_current_conditions
 
 router = APIRouter(prefix="/farms", tags=["farms"])
 
 
-def _to_farm_out(farm: Farm) -> FarmOut:
+def _to_farm_out(farm: Farm, db: Session) -> FarmOut:
+    last_recommendation = (
+        db.query(Recommendation)
+        .filter(Recommendation.farm_id == farm.id, Recommendation.status == "complete")
+        .order_by(Recommendation.created_at.desc())
+        .first()
+    )
+
     return FarmOut(
         id=farm.id,
         farm_name=farm.farm_name,
@@ -26,8 +35,7 @@ def _to_farm_out(farm: Farm) -> FarmOut:
         budget=farm.budget,
         target_season=farm.target_season,
         created_at=farm.created_at,
-        # No RECOMMENDATION table yet (future increment) — always null for now.
-        last_recommendation_at=None,
+        last_recommendation_at=last_recommendation.created_at if last_recommendation else None,
     )
 
 
@@ -49,7 +57,7 @@ def list_farms(
         .order_by(Farm.created_at.desc())
         .all()
     )
-    return [_to_farm_out(farm) for farm in farms]
+    return [_to_farm_out(f, db) for f in farms]
 
 
 @router.post("", response_model=FarmOut, status_code=status.HTTP_201_CREATED)
@@ -76,7 +84,7 @@ def create_farm(
     db.add(farm)
     db.commit()
     db.refresh(farm)
-    return _to_farm_out(farm)
+    return _to_farm_out(farm, db)
 
 
 @router.get("/{farm_id}", response_model=FarmOut)
@@ -86,7 +94,32 @@ def get_farm(
     current_farmer: Farmer = Depends(get_current_farmer),
 ):
     farm = _get_owned_farm(farm_id, current_farmer, db)
-    return _to_farm_out(farm)
+    return _to_farm_out(farm, db)
+
+
+@router.get("/{farm_id}/conditions", response_model=ConditionsOut)
+async def get_farm_conditions(
+    farm_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_farmer: Farmer = Depends(get_current_farmer),
+):
+    farm = _get_owned_farm(farm_id, current_farmer, db)
+
+    if farm.district.center_lat is None or farm.district.center_lng is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Weather data unavailable for this district",
+        )
+
+    try:
+        conditions = await fetch_current_conditions(farm.district.center_lat, farm.district.center_lng)
+    except WeatherServiceError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Could not fetch live conditions right now",
+        )
+
+    return ConditionsOut(**conditions)
 
 
 @router.patch("/{farm_id}", response_model=FarmOut)
@@ -107,7 +140,7 @@ def update_farm(
 
     db.commit()
     db.refresh(farm)
-    return _to_farm_out(farm)
+    return _to_farm_out(farm, db)
 
 
 @router.delete("/{farm_id}", status_code=status.HTTP_204_NO_CONTENT)

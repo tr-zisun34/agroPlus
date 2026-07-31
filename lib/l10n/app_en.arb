@@ -59,5 +59,74 @@
   "targetSeasonLabel": "Target season",
   "requiredValidation": "Required",
   "positiveNumberValidation": "Must be a positive number",
-  "languageToggleTooltip": "Switch language"
+  "languageToggleTooltip": "Switch language",
+  "farmProfileTitle": "Farm profile",
+  "liveConditionsTitle": "Live conditions",
+  "recommendationTitle": "Recommendation",
+  "temperatureLabel": "Temperature",
+  "humidityLabel": "Humidity",
+  "rainfallLabel": "Rainfall",
+  "refreshTooltip": "Refresh",
+  "lastUpdatedLabel": "Last updated: {time}",
+  "@lastUpdatedLabel": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "minutesAgo": "{count, plural, one{{count} min ago} other{{count} min ago}}",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "conditionsLoadError": "Could not load live conditions.",
+  "farmDetailLoadError": "Could not load farm details.",
+  "recommendationLoadError": "Could not load your recommendation.",
+  "savePointError": "Could not save this point. Please try again.",
+  "comingSoonMessage": "This feature is coming soon",
+  "soilReadingTitle": "Soil reading",
+  "addPointTitle": "Add point",
+  "editPointTitle": "Edit point",
+  "nitrogenLabel": "Nitrogen (N)",
+  "phosphorusLabel": "Phosphorus (P)",
+  "potassiumLabel": "Potassium (K)",
+  "phLabel": "pH",
+  "savePointButton": "Save",
+  "compositePendingMessage": "Add the remaining points to see your composite reading",
+  "centerPointLabel": "Center",
+  "cornerPointLabel": "Corner {number}",
+  "@cornerPointLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "quadrantPointLabel": "Quadrant {number}",
+  "@quadrantPointLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "recommendationDisabledHint": "Add a soil reading below to unlock your recommendation",
+  "recommendationPipelinePendingMessage": "Could not generate a recommendation yet — try re-saving a point",
+  "bestCropsButton": "Best crops for my farm",
+  "confidenceLabel": "Confidence",
+  "yieldEstimateLabel": "Yield estimate",
+  "netProfitLabel": "Net profit",
+  "profitComingSoonNote": "Profit estimate coming soon",
+  "chatWithAgentButton": "Chat with agent",
+  "farmPickerTitle": "Chat about which farm?",
+  "farmPickerSubtitle": "The assistant will use this farm's soil and weather data.",
+  "farmAssistantTitle": "Farm assistant",
+  "chatGreeting": "Hi, I'm your farm assistant for {farmName}. Ask me anything about your soil, weather, or what to plant this season.",
+  "@chatGreeting": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "quickChipProfit": "Show profit breakdown",
+  "quickChipSoil": "Check soil condition",
+  "quickChipCrop": "Suggest another crop",
+  "messageInputHint": "Type a message",
+  "sendTooltip": "Send",
+  "placeholderAgentReply": "Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply."
 }

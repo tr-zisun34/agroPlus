@@ -47,3 +47,10 @@ class FarmOut(BaseModel):
     target_season: str
     created_at: datetime
     last_recommendation_at: datetime | None = None
+
+
+class ConditionsOut(BaseModel):
+    temperature: float
+    humidity: float
+    rainfall: float
+    fetched_at: datetime

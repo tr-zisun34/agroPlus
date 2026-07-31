@@ -14,6 +14,9 @@ from app.db.base import Base  # noqa: E402
 from app.models.farmer import Farmer  # noqa: E402,F401 (registers model on Base.metadata)
 from app.models.district import District  # noqa: E402,F401
 from app.models.farm import Farm  # noqa: E402,F401
+from app.models.recommendation import Recommendation  # noqa: E402,F401
+from app.models.sample_point import SamplePoint  # noqa: E402,F401
+from app.models.recommendation_crop import RecommendationCrop  # noqa: E402,F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

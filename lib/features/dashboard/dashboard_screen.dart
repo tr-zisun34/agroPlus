@@ -7,6 +7,8 @@ import '../../core/language_toggle.dart';
 import '../../l10n/app_localizations.dart';
 import '../auth/auth_provider.dart';
 import '../auth/login_screen.dart';
+import '../chat/farm_picker_modal.dart';
+import '../farm/farm_screen.dart';
 import 'add_farm_modal.dart';
 import 'farm_card.dart';
 import 'farm_provider.dart';
@@ -100,11 +102,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: _buildBody(l10n),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showAddFarmModal(context),
-        icon: const Icon(Icons.add),
-        label: Text(l10n.addFarm),
+      body: Stack(
+        children: [
+          _buildBody(l10n),
+          Positioned(
+            left: 16,
+            bottom: 16,
+            child: Consumer<FarmProvider>(
+              builder: (context, farmProvider, _) => FloatingActionButton.extended(
+                heroTag: 'chatWithAgentFab',
+                onPressed: farmProvider.farms.isEmpty ? null : () => showFarmPickerModal(context),
+                icon: const Icon(Icons.smart_toy_outlined),
+                label: Text(l10n.chatWithAgentButton),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton.extended(
+              heroTag: 'addFarmFab',
+              onPressed: () => showAddFarmModal(context),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.addFarm),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -158,7 +181,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               return FarmCard(
                 farm: farm,
                 onTap: () {
-                  // Farm detail screen is a future increment.
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => FarmScreen(farmId: farm.id, initialFarmName: farm.farmName),
+                    ),
+                  );
                 },
                 onDelete: () => _confirmAndDeleteFarm(farm),
               );

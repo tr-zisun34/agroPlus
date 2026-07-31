@@ -160,4 +160,158 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get languageToggleTooltip => 'ভাষা পরিবর্তন করুন';
+
+  @override
+  String get farmProfileTitle => 'খামারের বিবরণ';
+
+  @override
+  String get liveConditionsTitle => 'বর্তমান পরিবেশ';
+
+  @override
+  String get recommendationTitle => 'সুপারিশ';
+
+  @override
+  String get temperatureLabel => 'তাপমাত্রা';
+
+  @override
+  String get humidityLabel => 'আর্দ্রতা';
+
+  @override
+  String get rainfallLabel => 'বৃষ্টিপাত';
+
+  @override
+  String get refreshTooltip => 'রিফ্রেশ করুন';
+
+  @override
+  String lastUpdatedLabel(String time) {
+    return 'সর্বশেষ হালনাগাদ: $time';
+  }
+
+  @override
+  String minutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count মিনিট আগে',
+      one: '$count মিনিট আগে',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get conditionsLoadError => 'বর্তমান পরিবেশের তথ্য লোড করা যায়নি।';
+
+  @override
+  String get farmDetailLoadError => 'খামারের বিবরণ লোড করা যায়নি।';
+
+  @override
+  String get recommendationLoadError => 'আপনার সুপারিশ লোড করা যায়নি।';
+
+  @override
+  String get savePointError =>
+      'এই পয়েন্টটি সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।';
+
+  @override
+  String get comingSoonMessage => 'এই ফিচারটি শীঘ্রই আসছে';
+
+  @override
+  String get soilReadingTitle => 'মাটির পরীক্ষা';
+
+  @override
+  String get addPointTitle => 'পয়েন্ট যোগ করুন';
+
+  @override
+  String get editPointTitle => 'পয়েন্ট সম্পাদনা করুন';
+
+  @override
+  String get nitrogenLabel => 'নাইট্রোজেন (N)';
+
+  @override
+  String get phosphorusLabel => 'ফসফরাস (P)';
+
+  @override
+  String get potassiumLabel => 'পটাশিয়াম (K)';
+
+  @override
+  String get phLabel => 'pH';
+
+  @override
+  String get savePointButton => 'সংরক্ষণ করুন';
+
+  @override
+  String get compositePendingMessage =>
+      'সমন্বিত ফলাফল দেখতে বাকি পয়েন্টগুলো যোগ করুন';
+
+  @override
+  String get centerPointLabel => 'কেন্দ্র';
+
+  @override
+  String cornerPointLabel(int number) {
+    return 'কোণ $number';
+  }
+
+  @override
+  String quadrantPointLabel(int number) {
+    return 'চতুর্ভাগ $number';
+  }
+
+  @override
+  String get recommendationDisabledHint =>
+      'সুপারিশ আনলক করতে নিচে একটি মাটির পরীক্ষা যোগ করুন';
+
+  @override
+  String get recommendationPipelinePendingMessage =>
+      'সুপারিশ তৈরি করা যায়নি — একটি পয়েন্ট আবার সংরক্ষণ করার চেষ্টা করুন';
+
+  @override
+  String get bestCropsButton => 'আমার খামারের জন্য সেরা ফসল';
+
+  @override
+  String get confidenceLabel => 'নির্ভরযোগ্যতা';
+
+  @override
+  String get yieldEstimateLabel => 'ফলনের হিসাব';
+
+  @override
+  String get netProfitLabel => 'নিট মুনাফা';
+
+  @override
+  String get profitComingSoonNote => 'লাভের হিসাব শীঘ্রই আসছে';
+
+  @override
+  String get chatWithAgentButton => 'এজেন্টের সাথে চ্যাট করুন';
+
+  @override
+  String get farmPickerTitle => 'কোন খামার নিয়ে চ্যাট করবেন?';
+
+  @override
+  String get farmPickerSubtitle =>
+      'সহায়ক এই খামারের মাটি ও আবহাওয়ার তথ্য ব্যবহার করবে।';
+
+  @override
+  String get farmAssistantTitle => 'খামার সহায়ক';
+
+  @override
+  String chatGreeting(String farmName) {
+    return 'হাই, আমি $farmName-এর জন্য আপনার খামার সহায়ক। মাটি, আবহাওয়া বা এই মৌসুমে কী চাষ করবেন তা নিয়ে যেকোনো প্রশ্ন করতে পারেন।';
+  }
+
+  @override
+  String get quickChipProfit => 'লাভের হিসাব দেখুন';
+
+  @override
+  String get quickChipSoil => 'মাটির অবস্থা পরীক্ষা করুন';
+
+  @override
+  String get quickChipCrop => 'অন্য ফসলের পরামর্শ নিন';
+
+  @override
+  String get messageInputHint => 'একটি বার্তা লিখুন';
+
+  @override
+  String get sendTooltip => 'পাঠান';
+
+  @override
+  String get placeholderAgentReply =>
+      'আপনার বার্তার জন্য ধন্যবাদ! প্রকৃত খামার সহায়ক উত্তর শীঘ্রই আসছে — আপাতত এটি একটি নমুনা উত্তর।';
 }

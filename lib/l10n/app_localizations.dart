@@ -367,6 +367,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch language'**
   String get languageToggleTooltip;
+
+  /// No description provided for @farmProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm profile'**
+  String get farmProfileTitle;
+
+  /// No description provided for @liveConditionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live conditions'**
+  String get liveConditionsTitle;
+
+  /// No description provided for @recommendationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation'**
+  String get recommendationTitle;
+
+  /// No description provided for @temperatureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature'**
+  String get temperatureLabel;
+
+  /// No description provided for @humidityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Humidity'**
+  String get humidityLabel;
+
+  /// No description provided for @rainfallLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rainfall'**
+  String get rainfallLabel;
+
+  /// No description provided for @refreshTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refreshTooltip;
+
+  /// No description provided for @lastUpdatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {time}'**
+  String lastUpdatedLabel(String time);
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} min ago} other{{count} min ago}}'**
+  String minutesAgo(int count);
+
+  /// No description provided for @conditionsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load live conditions.'**
+  String get conditionsLoadError;
+
+  /// No description provided for @farmDetailLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load farm details.'**
+  String get farmDetailLoadError;
+
+  /// No description provided for @recommendationLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your recommendation.'**
+  String get recommendationLoadError;
+
+  /// No description provided for @savePointError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save this point. Please try again.'**
+  String get savePointError;
+
+  /// No description provided for @comingSoonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is coming soon'**
+  String get comingSoonMessage;
+
+  /// No description provided for @soilReadingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Soil reading'**
+  String get soilReadingTitle;
+
+  /// No description provided for @addPointTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add point'**
+  String get addPointTitle;
+
+  /// No description provided for @editPointTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit point'**
+  String get editPointTitle;
+
+  /// No description provided for @nitrogenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nitrogen (N)'**
+  String get nitrogenLabel;
+
+  /// No description provided for @phosphorusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phosphorus (P)'**
+  String get phosphorusLabel;
+
+  /// No description provided for @potassiumLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Potassium (K)'**
+  String get potassiumLabel;
+
+  /// No description provided for @phLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'pH'**
+  String get phLabel;
+
+  /// No description provided for @savePointButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get savePointButton;
+
+  /// No description provided for @compositePendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the remaining points to see your composite reading'**
+  String get compositePendingMessage;
+
+  /// No description provided for @centerPointLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Center'**
+  String get centerPointLabel;
+
+  /// No description provided for @cornerPointLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Corner {number}'**
+  String cornerPointLabel(int number);
+
+  /// No description provided for @quadrantPointLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quadrant {number}'**
+  String quadrantPointLabel(int number);
+
+  /// No description provided for @recommendationDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a soil reading below to unlock your recommendation'**
+  String get recommendationDisabledHint;
+
+  /// No description provided for @recommendationPipelinePendingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not generate a recommendation yet — try re-saving a point'**
+  String get recommendationPipelinePendingMessage;
+
+  /// No description provided for @bestCropsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Best crops for my farm'**
+  String get bestCropsButton;
+
+  /// No description provided for @confidenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence'**
+  String get confidenceLabel;
+
+  /// No description provided for @yieldEstimateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Yield estimate'**
+  String get yieldEstimateLabel;
+
+  /// No description provided for @netProfitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net profit'**
+  String get netProfitLabel;
+
+  /// No description provided for @profitComingSoonNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit estimate coming soon'**
+  String get profitComingSoonNote;
+
+  /// No description provided for @chatWithAgentButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with agent'**
+  String get chatWithAgentButton;
+
+  /// No description provided for @farmPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat about which farm?'**
+  String get farmPickerTitle;
+
+  /// No description provided for @farmPickerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant will use this farm\'s soil and weather data.'**
+  String get farmPickerSubtitle;
+
+  /// No description provided for @farmAssistantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm assistant'**
+  String get farmAssistantTitle;
+
+  /// No description provided for @chatGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, I\'m your farm assistant for {farmName}. Ask me anything about your soil, weather, or what to plant this season.'**
+  String chatGreeting(String farmName);
+
+  /// No description provided for @quickChipProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Show profit breakdown'**
+  String get quickChipProfit;
+
+  /// No description provided for @quickChipSoil.
+  ///
+  /// In en, this message translates to:
+  /// **'Check soil condition'**
+  String get quickChipSoil;
+
+  /// No description provided for @quickChipCrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest another crop'**
+  String get quickChipCrop;
+
+  /// No description provided for @messageInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message'**
+  String get messageInputHint;
+
+  /// No description provided for @sendTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get sendTooltip;
+
+  /// No description provided for @placeholderAgentReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply.'**
+  String get placeholderAgentReply;
 }
 
 class _AppLocalizationsDelegate
