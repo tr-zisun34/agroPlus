@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/api_client.dart';
+import '../../core/language_toggle.dart';
+import '../../l10n/app_localizations.dart';
 import '../auth/auth_provider.dart';
 import '../auth/login_screen.dart';
+import 'add_farm_modal.dart';
+import 'farm_card.dart';
+import 'farm_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,14 +19,15 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  bool _isLoading = true;
+  bool _isLoadingFarmer = true;
   String? _farmerName;
-  String? _errorMessage;
+  String? _farmerErrorMessage;
 
   @override
   void initState() {
     super.initState();
     _loadFarmer();
+    context.read<FarmProvider>().loadFarms();
   }
 
   Future<void> _loadFarmer() async {
@@ -29,12 +35,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final response = await ApiClient.instance.dio.get('/farmers/me');
       setState(() {
         _farmerName = response.data['name'] as String;
-        _isLoading = false;
+        _isLoadingFarmer = false;
       });
     } on DioException {
+      if (!mounted) return;
       setState(() {
-        _errorMessage = 'Could not load your profile.';
-        _isLoading = false;
+        _farmerErrorMessage = AppLocalizations.of(context)!.profileLoadError;
+        _isLoadingFarmer = false;
       });
     }
   }
@@ -48,58 +55,117 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isLoading ? 'Dashboard' : (_farmerName ?? 'Dashboard')),
+  Future<void> _confirmAndDeleteFarm(Farm farm) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.deleteFarmTitle),
+        content: Text(l10n.deleteFarmContent(farm.farmName)),
         actions: [
-          IconButton(
-            onPressed: _logout,
-            icon: const Icon(Icons.logout),
-            tooltip: 'Log out',
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.cancelButton),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.deleteButton),
           ),
         ],
       ),
-      body: _buildBody(),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final error = await context.read<FarmProvider>().deleteFarm(farm.id);
+    if (!mounted || error == null) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_isLoadingFarmer ? l10n.dashboardTitle : (_farmerName ?? l10n.dashboardTitle)),
+        actions: [
+          const LanguageToggle(),
+          IconButton(
+            onPressed: _logout,
+            icon: const Icon(Icons.logout),
+            tooltip: l10n.logoutTooltip,
+          ),
+        ],
+      ),
+      body: _buildBody(l10n),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Add farm is coming in a later update.')),
-          );
-        },
+        onPressed: () => showAddFarmModal(context),
         icon: const Icon(Icons.add),
-        label: const Text('Add farm'),
+        label: Text(l10n.addFarm),
       ),
     );
   }
 
-  Widget _buildBody() {
-    if (_isLoading) {
+  Widget _buildBody(AppLocalizations l10n) {
+    if (_isLoadingFarmer) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_errorMessage != null) {
-      return Center(child: Text(_errorMessage!));
+    if (_farmerErrorMessage != null) {
+      return Center(child: Text(_farmerErrorMessage!));
     }
 
-    // No /farms endpoint yet in this increment — always show the empty state.
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.agriculture_outlined, size: 64, color: Theme.of(context).colorScheme.outline),
-            const SizedBox(height: 16),
-            Text(
-              "You haven't added a farm yet",
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
+    return Consumer<FarmProvider>(
+      builder: (context, farmProvider, _) {
+        if (farmProvider.isLoadingFarms) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (farmProvider.farmsErrorMessage != null) {
+          return Center(child: Text(farmProvider.farmsErrorMessage!));
+        }
+
+        if (farmProvider.farms.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.agriculture_outlined, size: 64, color: Theme.of(context).colorScheme.outline),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.emptyFarmsMessage,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: farmProvider.refresh,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            itemCount: farmProvider.farms.length,
+            itemBuilder: (context, index) {
+              final farm = farmProvider.farms[index];
+              return FarmCard(
+                farm: farm,
+                onTap: () {
+                  // Farm detail screen is a future increment.
+                },
+                onDelete: () => _confirmAndDeleteFarm(farm),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

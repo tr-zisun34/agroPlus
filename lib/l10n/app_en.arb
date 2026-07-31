@@ -1,0 +1,63 @@
+{
+  "@@locale": "en",
+  "appTitle": "AgroPlus",
+  "loginHeadline": "Log in to your account",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "emailRequired": "Email is required",
+  "passwordRequired": "Password is required",
+  "logInButton": "Log in",
+  "noAccountRegisterPrompt": "Don't have an account? Register",
+  "createAccountTitle": "Create account",
+  "nameLabel": "Name",
+  "phoneLabel": "Phone",
+  "nameRequired": "Name is required",
+  "phoneRequired": "Phone is required",
+  "passwordTooShort": "Password must be at least 8 characters",
+  "registerButton": "Register",
+  "dashboardTitle": "Dashboard",
+  "logoutTooltip": "Log out",
+  "addFarm": "Add farm",
+  "emptyFarmsMessage": "You haven't added a farm yet",
+  "profileLoadError": "Could not load your profile.",
+  "farmsLoadError": "Could not load your farms.",
+  "deleteFarmTitle": "Delete farm?",
+  "deleteFarmContent": "This will permanently remove \"{farmName}\" and its data.",
+  "@deleteFarmContent": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "cancelButton": "Cancel",
+  "deleteButton": "Delete",
+  "deleteFarmTooltip": "Delete farm",
+  "noChecksYet": "No checks yet",
+  "justNow": "Just now",
+  "daysAgo": "{count, plural, one{{count} day ago} other{{count} days ago}}",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hoursAgo": "{count, plural, one{{count} hour ago} other{{count} hours ago}}",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "closeTooltip": "Close",
+  "farmNameLabel": "Farm name",
+  "locationLabel": "Location",
+  "locationHint": "Near Teesta canal, Kaunia",
+  "districtLabel": "District",
+  "areaLabel": "Area (acres)",
+  "areaHint": "4.0",
+  "soilTypeLabel": "Soil type",
+  "waterAvailabilityLabel": "Water availability",
+  "budgetLabel": "Budget (BDT)",
+  "budgetHint": "50000",
+  "targetSeasonLabel": "Target season",
+  "requiredValidation": "Required",
+  "positiveNumberValidation": "Must be a positive number",
+  "languageToggleTooltip": "Switch language"
+}
