@@ -79,7 +79,7 @@ class FarmProvider extends ChangeNotifier {
           .map((item) => Farm.fromJson(item as Map<String, dynamic>))
           .toList();
     } on DioException {
-      farmsErrorMessage = 'Could not load your farms.';
+      farmsErrorMessage = 'Could not load your lands.';
     }
 
     isLoadingFarms = false;
@@ -127,7 +127,7 @@ class FarmProvider extends ChangeNotifier {
       return null;
     } on DioException catch (e) {
       final detail = e.response?.data is Map ? e.response?.data['detail'] : null;
-      return detail?.toString() ?? 'Could not add farm. Please try again.';
+      return detail?.toString() ?? 'Could not add land. Please try again.';
     }
   }
 
@@ -160,7 +160,7 @@ class FarmProvider extends ChangeNotifier {
       return null;
     } on DioException catch (e) {
       final detail = e.response?.data is Map ? e.response?.data['detail'] : null;
-      return detail?.toString() ?? 'Could not update farm. Please try again.';
+      return detail?.toString() ?? 'Could not update land. Please try again.';
     }
   }
 
@@ -172,7 +172,7 @@ class FarmProvider extends ChangeNotifier {
       return null;
     } on DioException catch (e) {
       final detail = e.response?.data is Map ? e.response?.data['detail'] : null;
-      return detail?.toString() ?? 'Could not delete farm. Please try again.';
+      return detail?.toString() ?? 'Could not delete land. Please try again.';
     }
   }
 }

@@ -5,7 +5,10 @@
       "Bash(adb -s emulator-5554 shell input text \"secret123\")",
       "Bash(adb -s emulator-5554 exec-out screencap -p)",
       "Bash(adb -s emulator-5554 shell input tap 540 1245)",
-      "Bash(adb -s emulator-5554 shell input tap 830 136)"
+      "Bash(adb -s emulator-5554 shell input tap 830 136)",
+      "Bash(adb -s emulator-5554 shell input swipe 540 1800 540 600 400)",
+      "Bash(adb -s emulator-5554 shell input tap 540 1795)",
+      "Bash(adb -s emulator-5554 shell wm size)"
     ]
   }
 }

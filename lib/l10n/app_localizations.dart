@@ -203,13 +203,13 @@ abstract class AppLocalizations {
   /// No description provided for @addFarm.
   ///
   /// In en, this message translates to:
-  /// **'Add farm'**
+  /// **'Add land'**
   String get addFarm;
 
   /// No description provided for @emptyFarmsMessage.
   ///
   /// In en, this message translates to:
-  /// **'You haven\'t added a farm yet'**
+  /// **'You haven\'t added a land yet'**
   String get emptyFarmsMessage;
 
   /// No description provided for @profileLoadError.
@@ -221,13 +221,13 @@ abstract class AppLocalizations {
   /// No description provided for @farmsLoadError.
   ///
   /// In en, this message translates to:
-  /// **'Could not load your farms.'**
+  /// **'Could not load your lands.'**
   String get farmsLoadError;
 
   /// No description provided for @deleteFarmTitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete farm?'**
+  /// **'Delete land?'**
   String get deleteFarmTitle;
 
   /// No description provided for @deleteFarmContent.
@@ -251,7 +251,7 @@ abstract class AppLocalizations {
   /// No description provided for @deleteFarmTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Delete farm'**
+  /// **'Delete land'**
   String get deleteFarmTooltip;
 
   /// No description provided for @noChecksYet.
@@ -287,7 +287,7 @@ abstract class AppLocalizations {
   /// No description provided for @farmNameLabel.
   ///
   /// In en, this message translates to:
-  /// **'Farm name'**
+  /// **'Land name'**
   String get farmNameLabel;
 
   /// No description provided for @locationLabel.
@@ -371,7 +371,7 @@ abstract class AppLocalizations {
   /// No description provided for @farmProfileTitle.
   ///
   /// In en, this message translates to:
-  /// **'Farm profile'**
+  /// **'Land profile'**
   String get farmProfileTitle;
 
   /// No description provided for @liveConditionsTitle.
@@ -431,7 +431,7 @@ abstract class AppLocalizations {
   /// No description provided for @farmDetailLoadError.
   ///
   /// In en, this message translates to:
-  /// **'Could not load farm details.'**
+  /// **'Could not load land details.'**
   String get farmDetailLoadError;
 
   /// No description provided for @recommendationLoadError.
@@ -539,7 +539,7 @@ abstract class AppLocalizations {
   /// No description provided for @bestCropsButton.
   ///
   /// In en, this message translates to:
-  /// **'Best crops for my farm'**
+  /// **'Best crops for my land'**
   String get bestCropsButton;
 
   /// No description provided for @confidenceLabel.
@@ -566,6 +566,96 @@ abstract class AppLocalizations {
   /// **'Profit estimate coming soon'**
   String get profitComingSoonNote;
 
+  /// No description provided for @recommendationListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended crops'**
+  String get recommendationListTitle;
+
+  /// No description provided for @selectCropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a crop to see seed cost, growing season, and profit estimate'**
+  String get selectCropHint;
+
+  /// No description provided for @growingSeasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Growing season'**
+  String get growingSeasonLabel;
+
+  /// No description provided for @yieldAndCostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Yield & price'**
+  String get yieldAndCostTitle;
+
+  /// No description provided for @marketPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Market price'**
+  String get marketPriceLabel;
+
+  /// No description provided for @costBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost breakdown'**
+  String get costBreakdownTitle;
+
+  /// No description provided for @seedCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed cost'**
+  String get seedCostLabel;
+
+  /// No description provided for @seedCostUnavailableNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed cost not available for this crop yet'**
+  String get seedCostUnavailableNote;
+
+  /// No description provided for @fertilizerCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertilizer cost'**
+  String get fertilizerCostLabel;
+
+  /// No description provided for @fertilizerCostUnavailableNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertilizer cost not available for this crop yet'**
+  String get fertilizerCostUnavailableNote;
+
+  /// No description provided for @otherCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Other costs (labor, irrigation, land prep)'**
+  String get otherCostLabel;
+
+  /// No description provided for @totalCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated total cost'**
+  String get totalCostLabel;
+
+  /// No description provided for @profitEstimateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit estimate'**
+  String get profitEstimateTitle;
+
+  /// No description provided for @grossRevenueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gross revenue'**
+  String get grossRevenueLabel;
+
+  /// No description provided for @cropDetailLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load harvest details for this crop'**
+  String get cropDetailLoadError;
+
   /// No description provided for @chatWithAgentButton.
   ///
   /// In en, this message translates to:
@@ -575,25 +665,25 @@ abstract class AppLocalizations {
   /// No description provided for @farmPickerTitle.
   ///
   /// In en, this message translates to:
-  /// **'Chat about which farm?'**
+  /// **'Chat about which land?'**
   String get farmPickerTitle;
 
   /// No description provided for @farmPickerSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'The assistant will use this farm\'s soil and weather data.'**
+  /// **'The assistant will use this land\'s soil and weather data.'**
   String get farmPickerSubtitle;
 
   /// No description provided for @farmAssistantTitle.
   ///
   /// In en, this message translates to:
-  /// **'Farm assistant'**
+  /// **'Land assistant'**
   String get farmAssistantTitle;
 
   /// No description provided for @chatGreeting.
   ///
   /// In en, this message translates to:
-  /// **'Hi, I\'m your farm assistant for {farmName}. Ask me anything about your soil, weather, or what to plant this season.'**
+  /// **'Hi, I\'m your land assistant for {farmName}. Ask me anything about your soil, weather, or what to plant this season.'**
   String chatGreeting(String farmName);
 
   /// No description provided for @quickChipProfit.
@@ -626,11 +716,41 @@ abstract class AppLocalizations {
   /// **'Send'**
   String get sendTooltip;
 
-  /// No description provided for @placeholderAgentReply.
+  /// No description provided for @chatErrorReply.
   ///
   /// In en, this message translates to:
-  /// **'Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply.'**
-  String get placeholderAgentReply;
+  /// **'Sorry, I couldn\'t process that right now. Please try again.'**
+  String get chatErrorReply;
+
+  /// No description provided for @newConversationTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'New conversation'**
+  String get newConversationTooltip;
+
+  /// No description provided for @newConversationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start new conversation?'**
+  String get newConversationTitle;
+
+  /// No description provided for @newConversationContent.
+  ///
+  /// In en, this message translates to:
+  /// **'This will clear your current chat history for this land.'**
+  String get newConversationContent;
+
+  /// No description provided for @startButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get startButton;
+
+  /// No description provided for @newConversationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start a new conversation. Please try again.'**
+  String get newConversationError;
 
   /// No description provided for @viewHistoryButton.
   ///
@@ -665,19 +785,19 @@ abstract class AppLocalizations {
   /// No description provided for @editFarm.
   ///
   /// In en, this message translates to:
-  /// **'Edit farm'**
+  /// **'Edit land'**
   String get editFarm;
 
   /// No description provided for @editFarmTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Edit farm'**
+  /// **'Edit land'**
   String get editFarmTooltip;
 
   /// No description provided for @updateFarmError.
   ///
   /// In en, this message translates to:
-  /// **'Could not update farm. Please try again.'**
+  /// **'Could not update land. Please try again.'**
   String get updateFarmError;
 }
 

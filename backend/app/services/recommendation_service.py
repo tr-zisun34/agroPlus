@@ -1,9 +1,9 @@
 """Independently callable recommendation tools — designed so a future chat agent can call
 these directly via OpenAI function calling, not just internal helpers for one endpoint.
 
-get_soil_reading and get_recommendation are implemented for this increment.
-get_profit_estimate and get_explanation depend on yield/price lookup tables and an OpenAI
-integration that don't exist yet — deferred to a later increment.
+get_soil_reading, get_recommendation, get_profit_estimate, and get_crop_detail are implemented
+for this increment. get_explanation depends on an OpenAI integration that doesn't exist yet —
+deferred to a later increment.
 """
 
 import pathlib
@@ -15,10 +15,17 @@ import pandas as pd
 from sklearn.tree import export_text
 from sqlalchemy.orm import Session
 
+from app.models.crop_economics import CropEconomics
 from app.models.recommendation import Recommendation
 
 FEATURE_COLUMNS = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
 _ARTIFACTS_DIR = pathlib.Path(__file__).resolve().parent.parent / "ml_artifacts"
+
+# Scoped to the crops crop_economics actually has yield+price for (see seed_crop_economics.py).
+# The underlying Kaggle model still knows all 22 crops, but for this development phase we only
+# want to ever recommend one we can also show a profit number for — so the other 14 (cotton,
+# coffee, most fruits, etc.) are masked out of get_recommendation rather than retraining.
+SUPPORTED_CROPS = {"rice", "maize", "chickpea", "mungbean", "blackgram", "lentil", "jute", "mango"}
 
 _xgb_model = None
 _rf_model = None
@@ -68,13 +75,14 @@ def _print_decision_tree(rf_model, label_encoder) -> None:
     print("--- end decision tree ---\n")
 
 
-def get_recommendation(
+def get_all_crop_scores(
     n: float, p: float, k: float, temperature: float, humidity: float, ph: float, rainfall: float
 ) -> list[dict]:
-    """Top-3 crops with confidence, ensembled (simple average) from the XGBoost and Random
-    Forest models trained on the Kaggle Crop Recommendation dataset."""
+    """Every SUPPORTED_CROPS crop with its confidence, ensembled (simple average) from the
+    XGBoost and Random Forest models trained on the Kaggle Crop Recommendation dataset,
+    renormalized over just that subset and sorted descending. get_recommendation (the top-3
+    shown on the dashboard) and the chat agent's "other crop options" tool both slice this."""
     xgb_model, rf_model, label_encoder = _load_models()
-    _print_decision_tree(rf_model, label_encoder)
 
     features = pd.DataFrame([[n, p, k, temperature, humidity, ph, rainfall]], columns=FEATURE_COLUMNS)
 
@@ -82,8 +90,113 @@ def get_recommendation(
     rf_proba = rf_model.predict_proba(features)[0]
     avg_proba = (xgb_proba + rf_proba) / 2
 
-    top3_indices = np.argsort(avg_proba)[::-1][:3]
+    supported_mask = np.array([c in SUPPORTED_CROPS for c in label_encoder.classes_])
+    masked_proba = np.where(supported_mask, avg_proba, 0.0)
+    masked_proba = masked_proba / masked_proba.sum()
+
+    ranked_indices = [idx for idx in np.argsort(masked_proba)[::-1] if masked_proba[idx] > 0]
     return [
-        {"crop": label_encoder.inverse_transform([idx])[0], "confidence": float(avg_proba[idx])}
-        for idx in top3_indices
+        {"crop": label_encoder.inverse_transform([idx])[0], "confidence": float(masked_proba[idx])}
+        for idx in ranked_indices
     ]
+
+
+def get_recommendation(
+    n: float, p: float, k: float, temperature: float, humidity: float, ph: float, rainfall: float
+) -> list[dict]:
+    """Top-3 crops with confidence — see get_all_crop_scores for the full ranked list."""
+    xgb_model, rf_model, label_encoder = _load_models()
+    _print_decision_tree(rf_model, label_encoder)
+    return get_all_crop_scores(n, p, k, temperature, humidity, ph, rainfall)[:3]
+
+
+def get_profit_estimate(crop: str, size_acres: float, db: Session) -> dict | None:
+    """Yield and net profit for one crop on this farm, from national-average BAMIS/DAM figures.
+
+    Returns None when the crop has no yield/price row at all (e.g. a crop the model considers
+    agronomically viable but that isn't traded in Bangladesh markets) — callers should leave
+    yield_estimate/net_profit null rather than fabricate a number.
+
+    The ML model only ever outputs a generic crop name (e.g. "rice"), never a market variety,
+    but crop_economics keeps every variety (e.g. rice's amon/boro x local/hybrid grades) as its
+    own row since they're priced separately. When a crop has several variety rows, this averages
+    yield/price/cost across them for this one automatic figure — the per-variety rows themselves
+    stay queryable for a future "compare varieties" view.
+
+    Net profit is computed against BAMIS's own per-acre production cost estimate, not the
+    farmer's entered budget — that budget is informational (what they plan to spend) rather than
+    the basis for this estimate (what BAMIS expects the crop to actually cost to grow).
+    """
+    rows = db.query(CropEconomics).filter(CropEconomics.crop == crop.lower()).all()
+    if not rows or any(r.cost_bdt_per_acre is None for r in rows):
+        return None
+
+    avg_yield = sum(r.yield_kg_per_acre for r in rows) / len(rows)
+    avg_price = sum(r.price_bdt_per_kg for r in rows) / len(rows)
+    avg_cost = sum(r.cost_bdt_per_acre for r in rows) / len(rows)
+
+    total_yield_kg = avg_yield * size_acres
+    total_cost = avg_cost * size_acres
+    gross_revenue = total_yield_kg * avg_price
+    net_profit = gross_revenue - total_cost
+
+    return {"yield_estimate": total_yield_kg, "net_profit": net_profit, "total_cost": total_cost}
+
+
+def get_crop_detail(crop: str, size_acres: float, db: Session) -> dict | None:
+    """Full harvest economics breakdown for one crop on this farm — seed cost, itemized
+    fertilizer cost (BAMIS recipe x DAM fertilizer prices), other costs (whatever's left of
+    BAMIS's bundled total after subtracting seed + fertilizer), cultivation season, yield,
+    price, gross revenue, and net profit. Used by the per-crop detail screen a farmer reaches
+    after picking one of the top-3 recommended crops.
+
+    Returns None under the same condition as get_profit_estimate (no economics row for this crop).
+    """
+    rows = db.query(CropEconomics).filter(CropEconomics.crop == crop.lower()).all()
+    if not rows or any(r.cost_bdt_per_acre is None for r in rows):
+        return None
+
+    avg_yield = sum(r.yield_kg_per_acre for r in rows) / len(rows)
+    avg_price = sum(r.price_bdt_per_kg for r in rows) / len(rows)
+    avg_cost = sum(r.cost_bdt_per_acre for r in rows) / len(rows)
+    seed_costs = [r.seed_cost_bdt_per_acre for r in rows if r.seed_cost_bdt_per_acre is not None]
+    avg_seed_cost = sum(seed_costs) / len(seed_costs) if seed_costs else None
+    fertilizer_costs = [r.fertilizer_cost_bdt_per_acre for r in rows if r.fertilizer_cost_bdt_per_acre is not None]
+    avg_fertilizer_cost = sum(fertilizer_costs) / len(fertilizer_costs) if fertilizer_costs else None
+    other_costs = [r.other_cost_bdt_per_acre for r in rows if r.other_cost_bdt_per_acre is not None]
+    avg_other_cost = sum(other_costs) / len(other_costs) if other_costs else None
+    fertilizer_breakdown_per_acre = next((r.fertilizer_breakdown for r in rows if r.fertilizer_breakdown), None)
+    season_label = next((r.season_label for r in rows if r.season_label), None)
+
+    total_yield_kg = avg_yield * size_acres
+    gross_revenue = total_yield_kg * avg_price
+    total_cost = avg_cost * size_acres
+    seed_cost = avg_seed_cost * size_acres if avg_seed_cost is not None else None
+    fertilizer_cost = avg_fertilizer_cost * size_acres if avg_fertilizer_cost is not None else None
+    other_cost = avg_other_cost * size_acres if avg_other_cost is not None else None
+    net_profit = gross_revenue - total_cost
+
+    fertilizer_breakdown = None
+    if fertilizer_breakdown_per_acre:
+        fertilizer_breakdown = {
+            fert_type: {
+                "qty_kg": item["qty_kg_per_acre"] * size_acres,
+                "price_bdt_per_kg": item["price_bdt_per_kg"],
+                "cost_bdt": item["cost_bdt_per_acre"] * size_acres,
+            }
+            for fert_type, item in fertilizer_breakdown_per_acre.items()
+        }
+
+    return {
+        "crop": crop.lower(),
+        "yield_estimate": total_yield_kg,
+        "price_bdt_per_kg": avg_price,
+        "gross_revenue": gross_revenue,
+        "seed_cost": seed_cost,
+        "fertilizer_cost": fertilizer_cost,
+        "fertilizer_breakdown": fertilizer_breakdown,
+        "other_cost": other_cost,
+        "total_cost": total_cost,
+        "net_profit": net_profit,
+        "season_label": season_label,
+    }

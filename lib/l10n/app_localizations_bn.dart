@@ -60,19 +60,19 @@ class AppLocalizationsBn extends AppLocalizations {
   String get logoutTooltip => 'লগ আউট';
 
   @override
-  String get addFarm => 'খামার যোগ করুন';
+  String get addFarm => 'জমি যোগ করুন';
 
   @override
-  String get emptyFarmsMessage => 'আপনি এখনো কোনো খামার যোগ করেননি';
+  String get emptyFarmsMessage => 'আপনি এখনো কোনো জমি যোগ করেননি';
 
   @override
   String get profileLoadError => 'আপনার প্রোফাইল লোড করা যায়নি।';
 
   @override
-  String get farmsLoadError => 'আপনার খামারগুলো লোড করা যায়নি।';
+  String get farmsLoadError => 'আপনার জমিগুলো লোড করা যায়নি।';
 
   @override
-  String get deleteFarmTitle => 'খামারটি মুছবেন?';
+  String get deleteFarmTitle => 'জমিটি মুছবেন?';
 
   @override
   String deleteFarmContent(String farmName) {
@@ -86,7 +86,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get deleteButton => 'মুছুন';
 
   @override
-  String get deleteFarmTooltip => 'খামার মুছুন';
+  String get deleteFarmTooltip => 'জমি মুছুন';
 
   @override
   String get noChecksYet => 'এখনো কোনো পরীক্ষা হয়নি';
@@ -120,7 +120,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get closeTooltip => 'বন্ধ করুন';
 
   @override
-  String get farmNameLabel => 'খামারের নাম';
+  String get farmNameLabel => 'জমির নাম';
 
   @override
   String get locationLabel => 'অবস্থান';
@@ -162,7 +162,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get languageToggleTooltip => 'ভাষা পরিবর্তন করুন';
 
   @override
-  String get farmProfileTitle => 'খামারের বিবরণ';
+  String get farmProfileTitle => 'জমির বিবরণ';
 
   @override
   String get liveConditionsTitle => 'বর্তমান পরিবেশ';
@@ -202,7 +202,7 @@ class AppLocalizationsBn extends AppLocalizations {
   String get conditionsLoadError => 'বর্তমান পরিবেশের তথ্য লোড করা যায়নি।';
 
   @override
-  String get farmDetailLoadError => 'খামারের বিবরণ লোড করা যায়নি।';
+  String get farmDetailLoadError => 'জমির বিবরণ লোড করা যায়নি।';
 
   @override
   String get recommendationLoadError => 'আপনার সুপারিশ লোড করা যায়নি।';
@@ -264,7 +264,7 @@ class AppLocalizationsBn extends AppLocalizations {
       'সুপারিশ তৈরি করা যায়নি — একটি পয়েন্ট আবার সংরক্ষণ করার চেষ্টা করুন';
 
   @override
-  String get bestCropsButton => 'আমার খামারের জন্য সেরা ফসল';
+  String get bestCropsButton => 'আমার জমির জন্য সেরা ফসল';
 
   @override
   String get confidenceLabel => 'নির্ভরযোগ্যতা';
@@ -279,21 +279,69 @@ class AppLocalizationsBn extends AppLocalizations {
   String get profitComingSoonNote => 'লাভের হিসাব শীঘ্রই আসছে';
 
   @override
+  String get recommendationListTitle => 'প্রস্তাবিত ফসল';
+
+  @override
+  String get selectCropHint =>
+      'বীজের দাম, চাষের মৌসুম এবং লাভের হিসাব দেখতে একটি ফসল নির্বাচন করুন';
+
+  @override
+  String get growingSeasonLabel => 'চাষের মৌসুম';
+
+  @override
+  String get yieldAndCostTitle => 'ফলন ও দর';
+
+  @override
+  String get marketPriceLabel => 'বাজার দর';
+
+  @override
+  String get costBreakdownTitle => 'খরচের বিস্তারিত হিসাব';
+
+  @override
+  String get seedCostLabel => 'বীজের খরচ';
+
+  @override
+  String get seedCostUnavailableNote =>
+      'এই ফসলের জন্য বীজের খরচ এখনও পাওয়া যায়নি';
+
+  @override
+  String get fertilizerCostLabel => 'সারের খরচ';
+
+  @override
+  String get fertilizerCostUnavailableNote =>
+      'এই ফসলের জন্য সারের খরচ এখনও পাওয়া যায়নি';
+
+  @override
+  String get otherCostLabel => 'অন্যান্য খরচ (শ্রম, সেচ, জমি প্রস্তুতি)';
+
+  @override
+  String get totalCostLabel => 'আনুমানিক মোট খরচ';
+
+  @override
+  String get profitEstimateTitle => 'লাভের হিসাব';
+
+  @override
+  String get grossRevenueLabel => 'মোট আয়';
+
+  @override
+  String get cropDetailLoadError => 'এই ফসলের তথ্য লোড করা যায়নি';
+
+  @override
   String get chatWithAgentButton => 'এজেন্টের সাথে চ্যাট করুন';
 
   @override
-  String get farmPickerTitle => 'কোন খামার নিয়ে চ্যাট করবেন?';
+  String get farmPickerTitle => 'কোন জমি নিয়ে চ্যাট করবেন?';
 
   @override
   String get farmPickerSubtitle =>
-      'সহায়ক এই খামারের মাটি ও আবহাওয়ার তথ্য ব্যবহার করবে।';
+      'সহায়ক এই জমির মাটি ও আবহাওয়ার তথ্য ব্যবহার করবে।';
 
   @override
-  String get farmAssistantTitle => 'খামার সহায়ক';
+  String get farmAssistantTitle => 'জমি সহায়ক';
 
   @override
   String chatGreeting(String farmName) {
-    return 'হাই, আমি $farmName-এর জন্য আপনার খামার সহায়ক। মাটি, আবহাওয়া বা এই মৌসুমে কী চাষ করবেন তা নিয়ে যেকোনো প্রশ্ন করতে পারেন।';
+    return 'হাই, আমি $farmName-এর জন্য আপনার জমি সহায়ক। মাটি, আবহাওয়া বা এই মৌসুমে কী চাষ করবেন তা নিয়ে যেকোনো প্রশ্ন করতে পারেন।';
   }
 
   @override
@@ -312,8 +360,25 @@ class AppLocalizationsBn extends AppLocalizations {
   String get sendTooltip => 'পাঠান';
 
   @override
-  String get placeholderAgentReply =>
-      'আপনার বার্তার জন্য ধন্যবাদ! প্রকৃত খামার সহায়ক উত্তর শীঘ্রই আসছে — আপাতত এটি একটি নমুনা উত্তর।';
+  String get chatErrorReply =>
+      'দুঃখিত, এই মুহূর্তে উত্তর দেওয়া যাচ্ছে না। আবার চেষ্টা করুন।';
+
+  @override
+  String get newConversationTooltip => 'নতুন কথোপকথন';
+
+  @override
+  String get newConversationTitle => 'নতুন কথোপকথন শুরু করবেন?';
+
+  @override
+  String get newConversationContent =>
+      'এটি এই জমির জন্য আপনার বর্তমান চ্যাট ইতিহাস মুছে ফেলবে।';
+
+  @override
+  String get startButton => 'শুরু করুন';
+
+  @override
+  String get newConversationError =>
+      'নতুন কথোপকথন শুরু করা যায়নি। আবার চেষ্টা করুন।';
 
   @override
   String get viewHistoryButton => 'ইতিহাস দেখুন';
@@ -331,11 +396,11 @@ class AppLocalizationsBn extends AppLocalizations {
   String get compositeReadingLabel => 'সমন্বিত ফলাফল';
 
   @override
-  String get editFarm => 'খামার সম্পাদনা করুন';
+  String get editFarm => 'জমি সম্পাদনা করুন';
 
   @override
-  String get editFarmTooltip => 'খামার সম্পাদনা করুন';
+  String get editFarmTooltip => 'জমি সম্পাদনা করুন';
 
   @override
-  String get updateFarmError => 'খামার হালনাগাদ করা যায়নি। আবার চেষ্টা করুন।';
+  String get updateFarmError => 'জমি হালনাগাদ করা যায়নি। আবার চেষ্টা করুন।';
 }

@@ -1,0 +1,272 @@
+"""Farm assistant chat agent — wraps the recommendation_service tools (anticipated by that
+module's docstring) in an OpenAI function-calling loop, grounded in one farm's own saved data
+(soil reading, current recommendation, crop economics) rather than general crop knowledge.
+"""
+
+import asyncio
+import json
+
+from openai import OpenAI
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.models.farm import Farm
+from app.models.recommendation import Recommendation
+from app.services.recommendation_service import (
+    get_all_crop_scores,
+    get_crop_detail,
+    get_profit_estimate,
+    get_soil_reading,
+)
+from app.services.weather_service import WeatherServiceError, fetch_current_conditions
+
+MODEL = "gpt-4o-mini"
+MAX_TOOL_ROUNDS = 5
+
+_client: OpenAI | None = None
+
+
+def _get_client() -> OpenAI:
+    global _client
+    if _client is None:
+        _client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    return _client
+
+
+TOOLS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_soil_reading",
+            "description": "Get this farm's most recent composite soil reading (N, P, K, pH), "
+            "averaged across its saved sample points. Returns a 'no reading yet' note if the "
+            "farmer hasn't completed a soil sample.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_live_weather",
+            "description": "Get current temperature, humidity, and rainfall for this farm's district.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_recommendation",
+            "description": "Get the top-3 crops currently recommended for this farm (the same "
+            "list shown on the farm's dashboard), each with its confidence, yield estimate, and "
+            "net profit estimate. Returns a 'no recommendation yet' note if the farmer hasn't "
+            "completed a soil sample.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_crop_detail",
+            "description": "Get the full harvest economics breakdown for one specific crop on "
+            "this farm: growing season, expected yield, market price, seed cost, itemized "
+            "fertilizer cost, other costs, total cost, gross revenue, and net profit.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "crop": {
+                        "type": "string",
+                        "description": "Crop name, e.g. 'rice', 'mungbean', 'mango'.",
+                    }
+                },
+                "required": ["crop"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_other_crop_options",
+            "description": "Get every crop the recommendation model supports for this farm's "
+            "soil and weather — not just the saved top-3 — each with its model confidence, "
+            "yield estimate, and net profit. Use this when the farmer asks for alternatives or "
+            "crops beyond the top-3 recommendation. Requires a saved soil reading and working "
+            "weather data; returns a note if either is unavailable.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+]
+
+
+def _build_system_prompt(farm: Farm) -> str:
+    return (
+        "You are AgroPlus's farm assistant, helping a Bangladeshi farmer understand their farm's "
+        "soil, weather, and crop recommendations. You are chatting about one specific farm:\n"
+        f"- Farm name: {farm.farm_name}\n"
+        f"- District: {farm.district.name}\n"
+        f"- Size: {farm.size_acres} acres\n"
+        f"- Soil type: {farm.soil_type}\n"
+        f"- Water availability: {farm.water_availability}\n"
+        f"- Target season: {farm.target_season}\n"
+        f"- Budget: {farm.budget} BDT\n\n"
+        "Use the provided tools to fetch this farm's actual soil reading, weather, "
+        "recommendation, and crop economics data rather than guessing. Only state numbers that "
+        "came from a tool call. Never assume a prerequisite (like 'you need to add a soil "
+        "sample first') without checking — call the relevant tool and let its 'unavailable' "
+        "status tell you that, rather than guessing it. If the farmer asks for crop suggestions "
+        "beyond the saved top-3, or for alternatives, or 'what else could I grow', always call "
+        "get_other_crop_options before replying — do not assume more data is needed. Keep "
+        "answers short and practical. Reply in the same language the farmer is writing in."
+    )
+
+
+def _run_get_soil_reading(farm: Farm, db: Session) -> dict:
+    reading = get_soil_reading(farm.id, db)
+    if reading is None:
+        return {"status": "unavailable", "note": "No soil reading saved yet for this farm."}
+    return {"status": "ok", "reading": reading}
+
+
+async def _run_get_live_weather(farm: Farm) -> dict:
+    if farm.district.center_lat is None or farm.district.center_lng is None:
+        return {"status": "unavailable", "note": "No coordinates on file for this district."}
+    try:
+        conditions = await fetch_current_conditions(farm.district.center_lat, farm.district.center_lng)
+    except WeatherServiceError:
+        return {"status": "unavailable", "note": "Weather service request failed."}
+    return {
+        "status": "ok",
+        "temperature_c": conditions["temperature"],
+        "humidity_percent": conditions["humidity"],
+        "rainfall_mm": conditions["rainfall"],
+    }
+
+
+def _run_get_current_recommendation(farm: Farm, db: Session) -> dict:
+    recommendation = (
+        db.query(Recommendation)
+        .filter(Recommendation.farm_id == farm.id)
+        .order_by(Recommendation.created_at.desc())
+        .first()
+    )
+    if recommendation is None or recommendation.status != "complete" or not recommendation.top_crops:
+        return {"status": "unavailable", "note": "No completed recommendation yet for this farm."}
+    return {
+        "status": "ok",
+        "top_crops": [
+            {
+                "rank": c.rank,
+                "crop": c.crop,
+                "confidence": c.confidence,
+                "yield_estimate_kg": c.yield_estimate,
+                "net_profit_bdt": c.net_profit,
+            }
+            for c in recommendation.top_crops
+        ],
+    }
+
+
+def _run_get_crop_detail(farm: Farm, crop: str, db: Session) -> dict:
+    detail = get_crop_detail(crop=crop, size_acres=farm.size_acres, db=db)
+    if detail is None:
+        return {"status": "unavailable", "note": f"No economics data available for '{crop}'."}
+    return {"status": "ok", "detail": detail}
+
+
+async def _run_get_other_crop_options(farm: Farm, db: Session) -> dict:
+    reading = get_soil_reading(farm.id, db)
+    if reading is None:
+        return {"status": "unavailable", "note": "No soil reading saved yet for this farm."}
+    if farm.district.center_lat is None or farm.district.center_lng is None:
+        return {"status": "unavailable", "note": "No coordinates on file for this district."}
+    try:
+        conditions = await fetch_current_conditions(farm.district.center_lat, farm.district.center_lng)
+    except WeatherServiceError:
+        return {"status": "unavailable", "note": "Weather service request failed."}
+
+    scores = get_all_crop_scores(
+        n=reading["n"],
+        p=reading["p"],
+        k=reading["k"],
+        temperature=conditions["temperature"],
+        humidity=conditions["humidity"],
+        ph=reading["ph"],
+        rainfall=conditions["rainfall"],
+    )
+    options = []
+    for item in scores:
+        profit = get_profit_estimate(crop=item["crop"], size_acres=farm.size_acres, db=db)
+        options.append(
+            {
+                "crop": item["crop"],
+                "confidence": item["confidence"],
+                "yield_estimate_kg": profit["yield_estimate"] if profit else None,
+                "net_profit_bdt": profit["net_profit"] if profit else None,
+            }
+        )
+    return {"status": "ok", "crops_ranked_by_confidence": options}
+
+
+async def _dispatch_tool_call(name: str, arguments: dict, farm: Farm, db: Session) -> dict:
+    if name == "get_soil_reading":
+        return _run_get_soil_reading(farm, db)
+    if name == "get_live_weather":
+        return await _run_get_live_weather(farm)
+    if name == "get_current_recommendation":
+        return _run_get_current_recommendation(farm, db)
+    if name == "get_crop_detail":
+        return _run_get_crop_detail(farm, arguments.get("crop", ""), db)
+    if name == "get_other_crop_options":
+        return await _run_get_other_crop_options(farm, db)
+    return {"status": "error", "note": f"Unknown tool '{name}'."}
+
+
+async def run_chat_agent(farm: Farm, history: list[dict], db: Session) -> str:
+    """history: list of {"role": "user"|"assistant", "content": str}, oldest first."""
+    messages: list[dict] = [{"role": "system", "content": _build_system_prompt(farm)}]
+    messages.extend(history)
+
+    client = _get_client()
+
+    for _ in range(MAX_TOOL_ROUNDS):
+        response = await asyncio.to_thread(
+            client.chat.completions.create,
+            model=MODEL,
+            messages=messages,
+            tools=TOOLS,
+            temperature=0,
+        )
+        message = response.choices[0].message
+
+        if not message.tool_calls:
+            return message.content or ""
+
+        messages.append(
+            {
+                "role": "assistant",
+                "content": message.content,
+                "tool_calls": [
+                    {
+                        "id": tc.id,
+                        "type": "function",
+                        "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+                    }
+                    for tc in message.tool_calls
+                ],
+            }
+        )
+
+        for tool_call in message.tool_calls:
+            try:
+                arguments = json.loads(tool_call.function.arguments or "{}")
+            except json.JSONDecodeError:
+                arguments = {}
+            result = await _dispatch_tool_call(tool_call.function.name, arguments, farm, db)
+            messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": tool_call.id,
+                    "content": json.dumps(result, default=str),
+                }
+            )
+
+    return "Sorry, I'm having trouble pulling that information together right now. Please try again."

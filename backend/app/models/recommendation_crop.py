@@ -22,5 +22,6 @@ class RecommendationCrop(Base):
     confidence: Mapped[float] = mapped_column(Float, nullable=False)
     yield_estimate: Mapped[float | None] = mapped_column(Float, nullable=True)
     net_profit: Mapped[float | None] = mapped_column(Float, nullable=True)
+    total_cost: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     recommendation: Mapped["Recommendation"] = relationship(back_populates="top_crops")

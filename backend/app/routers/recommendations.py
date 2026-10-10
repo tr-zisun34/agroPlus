@@ -10,8 +10,8 @@ from app.models.farmer import Farmer
 from app.models.recommendation import Recommendation
 from app.models.recommendation_crop import RecommendationCrop
 from app.models.sample_point import SamplePoint
-from app.schemas.recommendation import RecommendationOut, RecommendationSummary, SamplePointIn
-from app.services.recommendation_service import get_recommendation
+from app.schemas.recommendation import CropDetailOut, RecommendationOut, RecommendationSummary, SamplePointIn
+from app.services.recommendation_service import get_crop_detail, get_profit_estimate, get_recommendation
 from app.services.sampling_service import required_points_for_area
 from app.services.weather_service import WeatherServiceError, fetch_current_conditions
 
@@ -91,6 +91,22 @@ def get_recommendation_detail(
     return recommendation
 
 
+@router.get("/{farm_id}/recommendations/current/crops/{crop}", response_model=CropDetailOut)
+def get_recommended_crop_detail(
+    farm_id: uuid.UUID,
+    crop: str,
+    db: Session = Depends(get_db),
+    current_farmer: Farmer = Depends(get_current_farmer),
+):
+    farm = _get_owned_farm(farm_id, current_farmer, db)
+
+    detail = get_crop_detail(crop=crop, size_acres=farm.size_acres, db=db)
+    if detail is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No economics data for this crop")
+
+    return detail
+
+
 @router.put("/{farm_id}/recommendations/current/points/{point_label}", response_model=RecommendationOut)
 async def upsert_point(
     farm_id: uuid.UUID,
@@ -167,12 +183,16 @@ async def upsert_point(
                     rainfall=conditions["rainfall"],
                 )
                 for rank, item in enumerate(top3, start=1):
+                    profit = get_profit_estimate(crop=item["crop"], size_acres=farm.size_acres, db=db)
                     db.add(
                         RecommendationCrop(
                             recommendation_id=recommendation.id,
                             rank=rank,
                             crop=item["crop"],
                             confidence=item["confidence"],
+                            yield_estimate=profit["yield_estimate"] if profit else None,
+                            net_profit=profit["net_profit"] if profit else None,
+                            total_cost=profit["total_cost"] if profit else None,
                         )
                     )
             except WeatherServiceError:

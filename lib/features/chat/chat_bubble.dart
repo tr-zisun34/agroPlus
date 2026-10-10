@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 import 'chat_provider.dart';
 
@@ -29,7 +30,19 @@ class ChatBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(color: bubbleColor, borderRadius: borderRadius),
-        child: Text(message.text, style: TextStyle(color: textColor)),
+        child: MarkdownBody(
+          data: message.text,
+          shrinkWrap: true,
+          styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
+            p: TextStyle(color: textColor),
+            strong: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+            em: TextStyle(color: textColor, fontStyle: FontStyle.italic),
+            listBullet: TextStyle(color: textColor),
+            h1: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+            h2: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+            h3: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }

@@ -29,7 +29,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadFarmer();
-    context.read<FarmProvider>().loadFarms();
+    // Deferred to a microtask: loadFarms() calls notifyListeners() before its first await,
+    // and this screen can mount mid-build (e.g. right after login, inside Consumer<AuthProvider>),
+    // which would otherwise trip "setState() called during build".
+    Future.microtask(() {
+      if (!mounted) return;
+      context.read<FarmProvider>().loadFarms();
+    });
   }
 
   Future<void> _loadFarmer() async {

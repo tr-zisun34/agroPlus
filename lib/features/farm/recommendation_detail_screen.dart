@@ -101,29 +101,45 @@ class _DetailCropRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final cropName = crop.crop.isEmpty ? crop.crop : crop.crop[0].toUpperCase() + crop.crop.substring(1);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 14,
-            backgroundColor: colorScheme.primaryContainer,
-            child: Text(
-              '${crop.rank}',
-              style: TextStyle(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold, fontSize: 13),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 14,
+                backgroundColor: colorScheme.primaryContainer,
+                child: Text(
+                  '${crop.rank}',
+                  style:
+                      TextStyle(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(cropName, style: Theme.of(context).textTheme.titleSmall),
+              ),
+              Text(
+                '${(crop.confidence * 100).toStringAsFixed(0)}%',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+          if (crop.netProfit != null && crop.yieldEstimate != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 40, top: 2),
+              child: Text(
+                '${l10n.yieldEstimateLabel}: ${crop.yieldEstimate!.toStringAsFixed(0)} kg · '
+                '${l10n.netProfitLabel}: ${crop.netProfit!.toStringAsFixed(0)} BDT',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(cropName, style: Theme.of(context).textTheme.titleSmall),
-          ),
-          Text(
-            '${(crop.confidence * 100).toStringAsFixed(0)}%',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
         ],
       ),
     );

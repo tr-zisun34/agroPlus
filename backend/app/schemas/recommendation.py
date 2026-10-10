@@ -29,6 +29,7 @@ class RecommendationCropOut(BaseModel):
     confidence: float
     yield_estimate: float | None
     net_profit: float | None
+    total_cost: float | None
 
 
 class RecommendationOut(BaseModel):
@@ -51,3 +52,23 @@ class RecommendationSummary(BaseModel):
     created_at: datetime
     top_crop: str
     top_confidence: float
+
+
+class FertilizerLineItem(BaseModel):
+    qty_kg: float
+    price_bdt_per_kg: float
+    cost_bdt: float
+
+
+class CropDetailOut(BaseModel):
+    crop: str
+    yield_estimate: float
+    price_bdt_per_kg: float
+    gross_revenue: float
+    seed_cost: float | None
+    fertilizer_cost: float | None
+    fertilizer_breakdown: dict[str, FertilizerLineItem] | None
+    other_cost: float | None
+    total_cost: float
+    net_profit: float
+    season_label: str | None

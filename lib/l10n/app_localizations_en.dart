@@ -60,19 +60,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutTooltip => 'Log out';
 
   @override
-  String get addFarm => 'Add farm';
+  String get addFarm => 'Add land';
 
   @override
-  String get emptyFarmsMessage => 'You haven\'t added a farm yet';
+  String get emptyFarmsMessage => 'You haven\'t added a land yet';
 
   @override
   String get profileLoadError => 'Could not load your profile.';
 
   @override
-  String get farmsLoadError => 'Could not load your farms.';
+  String get farmsLoadError => 'Could not load your lands.';
 
   @override
-  String get deleteFarmTitle => 'Delete farm?';
+  String get deleteFarmTitle => 'Delete land?';
 
   @override
   String deleteFarmContent(String farmName) {
@@ -86,7 +86,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteButton => 'Delete';
 
   @override
-  String get deleteFarmTooltip => 'Delete farm';
+  String get deleteFarmTooltip => 'Delete land';
 
   @override
   String get noChecksYet => 'No checks yet';
@@ -120,7 +120,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get closeTooltip => 'Close';
 
   @override
-  String get farmNameLabel => 'Farm name';
+  String get farmNameLabel => 'Land name';
 
   @override
   String get locationLabel => 'Location';
@@ -162,7 +162,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageToggleTooltip => 'Switch language';
 
   @override
-  String get farmProfileTitle => 'Farm profile';
+  String get farmProfileTitle => 'Land profile';
 
   @override
   String get liveConditionsTitle => 'Live conditions';
@@ -202,7 +202,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get conditionsLoadError => 'Could not load live conditions.';
 
   @override
-  String get farmDetailLoadError => 'Could not load farm details.';
+  String get farmDetailLoadError => 'Could not load land details.';
 
   @override
   String get recommendationLoadError => 'Could not load your recommendation.';
@@ -263,7 +263,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not generate a recommendation yet — try re-saving a point';
 
   @override
-  String get bestCropsButton => 'Best crops for my farm';
+  String get bestCropsButton => 'Best crops for my land';
 
   @override
   String get confidenceLabel => 'Confidence';
@@ -278,21 +278,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profitComingSoonNote => 'Profit estimate coming soon';
 
   @override
+  String get recommendationListTitle => 'Recommended crops';
+
+  @override
+  String get selectCropHint =>
+      'Select a crop to see seed cost, growing season, and profit estimate';
+
+  @override
+  String get growingSeasonLabel => 'Growing season';
+
+  @override
+  String get yieldAndCostTitle => 'Yield & price';
+
+  @override
+  String get marketPriceLabel => 'Market price';
+
+  @override
+  String get costBreakdownTitle => 'Cost breakdown';
+
+  @override
+  String get seedCostLabel => 'Seed cost';
+
+  @override
+  String get seedCostUnavailableNote =>
+      'Seed cost not available for this crop yet';
+
+  @override
+  String get fertilizerCostLabel => 'Fertilizer cost';
+
+  @override
+  String get fertilizerCostUnavailableNote =>
+      'Fertilizer cost not available for this crop yet';
+
+  @override
+  String get otherCostLabel => 'Other costs (labor, irrigation, land prep)';
+
+  @override
+  String get totalCostLabel => 'Estimated total cost';
+
+  @override
+  String get profitEstimateTitle => 'Profit estimate';
+
+  @override
+  String get grossRevenueLabel => 'Gross revenue';
+
+  @override
+  String get cropDetailLoadError =>
+      'Could not load harvest details for this crop';
+
+  @override
   String get chatWithAgentButton => 'Chat with agent';
 
   @override
-  String get farmPickerTitle => 'Chat about which farm?';
+  String get farmPickerTitle => 'Chat about which land?';
 
   @override
   String get farmPickerSubtitle =>
-      'The assistant will use this farm\'s soil and weather data.';
+      'The assistant will use this land\'s soil and weather data.';
 
   @override
-  String get farmAssistantTitle => 'Farm assistant';
+  String get farmAssistantTitle => 'Land assistant';
 
   @override
   String chatGreeting(String farmName) {
-    return 'Hi, I\'m your farm assistant for $farmName. Ask me anything about your soil, weather, or what to plant this season.';
+    return 'Hi, I\'m your land assistant for $farmName. Ask me anything about your soil, weather, or what to plant this season.';
   }
 
   @override
@@ -311,8 +360,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendTooltip => 'Send';
 
   @override
-  String get placeholderAgentReply =>
-      'Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply.';
+  String get chatErrorReply =>
+      'Sorry, I couldn\'t process that right now. Please try again.';
+
+  @override
+  String get newConversationTooltip => 'New conversation';
+
+  @override
+  String get newConversationTitle => 'Start new conversation?';
+
+  @override
+  String get newConversationContent =>
+      'This will clear your current chat history for this land.';
+
+  @override
+  String get startButton => 'Start';
+
+  @override
+  String get newConversationError =>
+      'Could not start a new conversation. Please try again.';
 
   @override
   String get viewHistoryButton => 'View history';
@@ -330,11 +396,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get compositeReadingLabel => 'Composite reading';
 
   @override
-  String get editFarm => 'Edit farm';
+  String get editFarm => 'Edit land';
 
   @override
-  String get editFarmTooltip => 'Edit farm';
+  String get editFarmTooltip => 'Edit land';
 
   @override
-  String get updateFarmError => 'Could not update farm. Please try again.';
+  String get updateFarmError => 'Could not update land. Please try again.';
 }

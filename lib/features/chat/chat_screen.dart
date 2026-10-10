@@ -18,9 +18,10 @@ class ChatScreen extends StatelessWidget {
 
     return ChangeNotifierProvider(
       create: (_) => ChatProvider(
+        farmId: farmId,
         greeting: l10n.chatGreeting(farmName),
-        placeholderReply: l10n.placeholderAgentReply,
-      ),
+        errorReply: l10n.chatErrorReply,
+      )..load(),
       child: _ChatScreenBody(farmName: farmName),
     );
   }
@@ -48,6 +49,34 @@ class _ChatScreenBodyState extends State<_ChatScreenBody> {
     if (text.trim().isEmpty) return;
     context.read<ChatProvider>().sendMessage(text);
     _textController.clear();
+  }
+
+  Future<void> _startNewConversation() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.newConversationTitle),
+        content: Text(l10n.newConversationContent),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.cancelButton),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.startButton),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final success = await context.read<ChatProvider>().startNewConversation();
+    if (!mounted || success) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.newConversationError)));
   }
 
   @override
@@ -83,19 +112,28 @@ class _ChatScreenBodyState extends State<_ChatScreenBody> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            onPressed: _startNewConversation,
+            icon: const Icon(Icons.add_comment_outlined),
+            tooltip: l10n.newConversationTooltip,
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              reverse: true,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[messages.length - 1 - index];
-                return ChatBubble(message: message);
-              },
-            ),
+            child: chatProvider.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    reverse: true,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[messages.length - 1 - index];
+                      return ChatBubble(message: message);
+                    },
+                  ),
           ),
           if (chatProvider.isAgentTyping)
             const Padding(
