@@ -10,7 +10,7 @@ from app.models.farmer import Farmer
 from app.models.recommendation import Recommendation
 from app.models.recommendation_crop import RecommendationCrop
 from app.models.sample_point import SamplePoint
-from app.schemas.recommendation import RecommendationOut, SamplePointIn
+from app.schemas.recommendation import RecommendationOut, RecommendationSummary, SamplePointIn
 from app.services.recommendation_service import get_recommendation
 from app.services.sampling_service import required_points_for_area
 from app.services.weather_service import WeatherServiceError, fetch_current_conditions
@@ -42,6 +42,52 @@ def get_current_recommendation(
 ):
     _get_owned_farm(farm_id, current_farmer, db)
     recommendation = _get_current_recommendation(farm_id, db)
+    return recommendation
+
+
+@router.get("/{farm_id}/recommendations", response_model=list[RecommendationSummary])
+def list_recommendations(
+    farm_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_farmer: Farmer = Depends(get_current_farmer),
+):
+    _get_owned_farm(farm_id, current_farmer, db)
+
+    completed = (
+        db.query(Recommendation)
+        .filter(Recommendation.farm_id == farm_id, Recommendation.status == "complete")
+        .order_by(Recommendation.created_at.desc())
+        .all()
+    )
+    return [
+        RecommendationSummary(
+            id=rec.id,
+            created_at=rec.created_at,
+            top_crop=rec.top_crops[0].crop,
+            top_confidence=rec.top_crops[0].confidence,
+        )
+        for rec in completed
+        if rec.top_crops
+    ]
+
+
+@router.get("/{farm_id}/recommendations/{recommendation_id}", response_model=RecommendationOut)
+def get_recommendation_detail(
+    farm_id: uuid.UUID,
+    recommendation_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_farmer: Farmer = Depends(get_current_farmer),
+):
+    _get_owned_farm(farm_id, current_farmer, db)
+
+    recommendation = (
+        db.query(Recommendation)
+        .filter(Recommendation.id == recommendation_id, Recommendation.farm_id == farm_id)
+        .first()
+    )
+    if recommendation is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Recommendation not found")
+
     return recommendation
 
 

@@ -128,5 +128,13 @@
   "quickChipCrop": "Suggest another crop",
   "messageInputHint": "Type a message",
   "sendTooltip": "Send",
-  "placeholderAgentReply": "Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply."
+  "placeholderAgentReply": "Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply.",
+  "viewHistoryButton": "View history",
+  "recommendationHistoryTitle": "Recommendation history",
+  "noHistoryMessage": "No recommendations yet.",
+  "recommendationDetailTitle": "Recommendation detail",
+  "compositeReadingLabel": "Composite reading",
+  "editFarm": "Edit farm",
+  "editFarmTooltip": "Edit farm",
+  "updateFarmError": "Could not update farm. Please try again."
 }

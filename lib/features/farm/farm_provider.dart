@@ -77,6 +77,7 @@ class Recommendation {
   const Recommendation({
     required this.id,
     required this.status,
+    required this.createdAt,
     required this.points,
     required this.topCrops,
     this.compositeN,
@@ -87,6 +88,7 @@ class Recommendation {
 
   final String id;
   final String status;
+  final DateTime createdAt;
   final List<SoilPoint> points;
   final List<RecommendedCrop> topCrops;
   final double? compositeN;
@@ -100,6 +102,7 @@ class Recommendation {
     return Recommendation(
       id: json['id'] as String,
       status: json['status'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
       points: (json['points'] as List)
           .map((item) => SoilPoint.fromJson(item as Map<String, dynamic>))
           .toList(),

@@ -44,3 +44,10 @@ class RecommendationOut(BaseModel):
     composite_ph: float | None
     points: list[SamplePointOut]
     top_crops: list[RecommendationCropOut]
+
+
+class RecommendationSummary(BaseModel):
+    id: uuid.UUID
+    created_at: datetime
+    top_crop: str
+    top_confidence: float

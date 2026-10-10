@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../dashboard/add_farm_modal.dart';
 import '../dashboard/farm_provider.dart';
+import 'farm_provider.dart' show FarmDetailProvider;
 
 class FarmProfileCard extends StatelessWidget {
   const FarmProfileCard({super.key, required this.farm});
 
   final Farm farm;
+
+  Future<void> _editFarm(BuildContext context) async {
+    await showAddFarmModal(context, existingFarm: farm);
+    if (!context.mounted) return;
+    final farmDetailProvider = context.read<FarmDetailProvider>();
+    await farmDetailProvider.loadFarm();
+    await farmDetailProvider.loadRecommendation();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +30,20 @@ class FarmProfileCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.farmProfileTitle, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(l10n.farmProfileTitle, style: Theme.of(context).textTheme.titleMedium),
+                ),
+                IconButton(
+                  onPressed: () => _editFarm(context),
+                  icon: const Icon(Icons.edit_outlined, size: 20),
+                  tooltip: l10n.editFarmTooltip,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
             _InfoRow(label: l10n.farmNameLabel, value: farm.farmName),
             _InfoRow(label: l10n.locationLabel, value: farm.location),
             _InfoRow(label: l10n.districtLabel, value: farm.district.name),

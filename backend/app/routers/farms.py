@@ -11,6 +11,7 @@ from app.models.farmer import Farmer
 from app.models.recommendation import Recommendation
 from app.schemas.district import DistrictOut
 from app.schemas.farm import ConditionsOut, FarmCreate, FarmOut, FarmUpdate
+from app.services.sampling_service import required_points_for_area
 from app.services.weather_service import WeatherServiceError, fetch_current_conditions
 
 router = APIRouter(prefix="/farms", tags=["farms"])
@@ -135,8 +136,23 @@ def update_farm(
     if "district_id" in updates and db.get(District, updates["district_id"]) is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unknown district_id")
 
+    old_size_acres = farm.size_acres
     for field, value in updates.items():
         setattr(farm, field, value)
+
+    if "size_acres" in updates and required_points_for_area(old_size_acres) != required_points_for_area(
+        farm.size_acres
+    ):
+        # The point layout for this farm's tier just changed shape — any in-progress reading's
+        # partially-filled points no longer match the new required set, so it can't continue.
+        # A completed reading stays valid as history; it was correct for the size at the time.
+        stale_recommendation = (
+            db.query(Recommendation)
+            .filter(Recommendation.farm_id == farm.id, Recommendation.status == "in_progress")
+            .first()
+        )
+        if stale_recommendation is not None:
+            db.delete(stale_recommendation)
 
     db.commit()
     db.refresh(farm)

@@ -314,4 +314,28 @@ class AppLocalizationsBn extends AppLocalizations {
   @override
   String get placeholderAgentReply =>
       'আপনার বার্তার জন্য ধন্যবাদ! প্রকৃত খামার সহায়ক উত্তর শীঘ্রই আসছে — আপাতত এটি একটি নমুনা উত্তর।';
+
+  @override
+  String get viewHistoryButton => 'ইতিহাস দেখুন';
+
+  @override
+  String get recommendationHistoryTitle => 'সুপারিশের ইতিহাস';
+
+  @override
+  String get noHistoryMessage => 'এখনো কোনো সুপারিশ নেই।';
+
+  @override
+  String get recommendationDetailTitle => 'সুপারিশের বিবরণ';
+
+  @override
+  String get compositeReadingLabel => 'সমন্বিত ফলাফল';
+
+  @override
+  String get editFarm => 'খামার সম্পাদনা করুন';
+
+  @override
+  String get editFarmTooltip => 'খামার সম্পাদনা করুন';
+
+  @override
+  String get updateFarmError => 'খামার হালনাগাদ করা যায়নি। আবার চেষ্টা করুন।';
 }

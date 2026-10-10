@@ -131,6 +131,39 @@ class FarmProvider extends ChangeNotifier {
     }
   }
 
+  Future<String?> updateFarm({
+    required String farmId,
+    required String farmName,
+    required String location,
+    required String districtId,
+    required double sizeAcres,
+    required String soilType,
+    required String waterAvailability,
+    required double budget,
+    required String targetSeason,
+  }) async {
+    try {
+      await ApiClient.instance.dio.patch(
+        '/farms/$farmId',
+        data: {
+          'farm_name': farmName,
+          'location': location,
+          'district_id': districtId,
+          'size_acres': sizeAcres,
+          'soil_type': soilType,
+          'water_availability': waterAvailability,
+          'budget': budget,
+          'target_season': targetSeason,
+        },
+      );
+      await refresh();
+      return null;
+    } on DioException catch (e) {
+      final detail = e.response?.data is Map ? e.response?.data['detail'] : null;
+      return detail?.toString() ?? 'Could not update farm. Please try again.';
+    }
+  }
+
   Future<String?> deleteFarm(String farmId) async {
     try {
       await ApiClient.instance.dio.delete('/farms/$farmId');

@@ -8,19 +8,21 @@ const _soilTypes = ['Clay', 'Loamy', 'Sandy', 'Silty'];
 const _waterAvailabilityOptions = ['Irrigated', 'Rain-fed', 'Limited'];
 const _targetSeasons = ['Rabi', 'Aus', 'Aman'];
 
-Future<void> showAddFarmModal(BuildContext context) {
+Future<void> showAddFarmModal(BuildContext context, {Farm? existingFarm}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
-    builder: (_) => const AddFarmModal(),
+    builder: (_) => AddFarmModal(existingFarm: existingFarm),
   );
 }
 
 class AddFarmModal extends StatefulWidget {
-  const AddFarmModal({super.key});
+  const AddFarmModal({super.key, this.existingFarm});
+
+  final Farm? existingFarm;
 
   @override
   State<AddFarmModal> createState() => _AddFarmModalState();
@@ -28,10 +30,10 @@ class AddFarmModal extends StatefulWidget {
 
 class _AddFarmModalState extends State<AddFarmModal> {
   final _formKey = GlobalKey<FormState>();
-  final _farmNameController = TextEditingController();
-  final _locationController = TextEditingController();
-  final _areaController = TextEditingController();
-  final _budgetController = TextEditingController();
+  late final _farmNameController = TextEditingController(text: widget.existingFarm?.farmName ?? '');
+  late final _locationController = TextEditingController(text: widget.existingFarm?.location ?? '');
+  late final _areaController = TextEditingController(text: widget.existingFarm?.sizeAcres.toString() ?? '');
+  late final _budgetController = TextEditingController(text: widget.existingFarm?.budget.toString() ?? '');
 
   District? _selectedDistrict;
   String? _selectedSoilType;
@@ -42,16 +44,31 @@ class _AddFarmModalState extends State<AddFarmModal> {
   bool _isSubmitting = false;
   String? _errorMessage;
 
+  bool get _isEditMode => widget.existingFarm != null;
+
   @override
   void initState() {
     super.initState();
+    _selectedSoilType = widget.existingFarm?.soilType;
+    _selectedWaterAvailability = widget.existingFarm?.waterAvailability;
+    _selectedTargetSeason = widget.existingFarm?.targetSeason;
     _loadDistricts();
   }
 
   Future<void> _loadDistricts() async {
     await context.read<FarmProvider>().loadDistricts();
     if (!mounted) return;
-    setState(() => _isLoadingDistricts = false);
+    setState(() {
+      _isLoadingDistricts = false;
+      final existingFarm = widget.existingFarm;
+      if (existingFarm != null) {
+        final districts = context.read<FarmProvider>().districts;
+        _selectedDistrict = districts.firstWhere(
+          (d) => d.id == existingFarm.district.id,
+          orElse: () => existingFarm.district,
+        );
+      }
+    });
   }
 
   @override
@@ -71,16 +88,29 @@ class _AddFarmModalState extends State<AddFarmModal> {
       _errorMessage = null;
     });
 
-    final error = await context.read<FarmProvider>().addFarm(
-          farmName: _farmNameController.text.trim(),
-          location: _locationController.text.trim(),
-          districtId: _selectedDistrict!.id,
-          sizeAcres: double.parse(_areaController.text),
-          soilType: _selectedSoilType!,
-          waterAvailability: _selectedWaterAvailability!,
-          budget: double.parse(_budgetController.text),
-          targetSeason: _selectedTargetSeason!,
-        );
+    final farmProvider = context.read<FarmProvider>();
+    final error = _isEditMode
+        ? await farmProvider.updateFarm(
+            farmId: widget.existingFarm!.id,
+            farmName: _farmNameController.text.trim(),
+            location: _locationController.text.trim(),
+            districtId: _selectedDistrict!.id,
+            sizeAcres: double.parse(_areaController.text),
+            soilType: _selectedSoilType!,
+            waterAvailability: _selectedWaterAvailability!,
+            budget: double.parse(_budgetController.text),
+            targetSeason: _selectedTargetSeason!,
+          )
+        : await farmProvider.addFarm(
+            farmName: _farmNameController.text.trim(),
+            location: _locationController.text.trim(),
+            districtId: _selectedDistrict!.id,
+            sizeAcres: double.parse(_areaController.text),
+            soilType: _selectedSoilType!,
+            waterAvailability: _selectedWaterAvailability!,
+            budget: double.parse(_budgetController.text),
+            targetSeason: _selectedTargetSeason!,
+          );
 
     if (!mounted) return;
 
@@ -109,6 +139,7 @@ class _AddFarmModalState extends State<AddFarmModal> {
   Widget build(BuildContext context) {
     final districts = context.watch<FarmProvider>().districts;
     final l10n = AppLocalizations.of(context)!;
+    final title = _isEditMode ? l10n.editFarm : l10n.addFarm;
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -126,7 +157,7 @@ class _AddFarmModalState extends State<AddFarmModal> {
                     children: [
                       Expanded(
                         child: Text(
-                          l10n.addFarm,
+                          title,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),
@@ -228,7 +259,7 @@ class _AddFarmModalState extends State<AddFarmModal> {
                               width: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : Text(l10n.addFarm),
+                          : Text(title),
                     ),
                   ],
                 ],

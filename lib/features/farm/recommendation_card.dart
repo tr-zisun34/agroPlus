@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../l10n/app_localizations.dart';
 import '../chat/chat_screen.dart';
 import 'farm_provider.dart';
+import 'recommendation_history_screen.dart';
 
 class RecommendationCard extends StatefulWidget {
   const RecommendationCard({
@@ -45,7 +46,20 @@ class _RecommendationCardState extends State<RecommendationCard> {
             Text(l10n.recommendationTitle, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 16),
             _buildContent(context, l10n),
-            const SizedBox(height: 16),
+            if (widget.recommendation?.isComplete ?? false)
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RecommendationHistoryScreen(farmId: widget.farmId),
+                      ),
+                    );
+                  },
+                  child: Text(l10n.viewHistoryButton),
+                ),
+              ),
+            const SizedBox(height: 8),
             Center(
               child: OutlinedButton.icon(
                 onPressed: () {

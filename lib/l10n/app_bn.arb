@@ -88,5 +88,13 @@
   "quickChipCrop": "অন্য ফসলের পরামর্শ নিন",
   "messageInputHint": "একটি বার্তা লিখুন",
   "sendTooltip": "পাঠান",
-  "placeholderAgentReply": "আপনার বার্তার জন্য ধন্যবাদ! প্রকৃত খামার সহায়ক উত্তর শীঘ্রই আসছে — আপাতত এটি একটি নমুনা উত্তর।"
+  "placeholderAgentReply": "আপনার বার্তার জন্য ধন্যবাদ! প্রকৃত খামার সহায়ক উত্তর শীঘ্রই আসছে — আপাতত এটি একটি নমুনা উত্তর।",
+  "viewHistoryButton": "ইতিহাস দেখুন",
+  "recommendationHistoryTitle": "সুপারিশের ইতিহাস",
+  "noHistoryMessage": "এখনো কোনো সুপারিশ নেই।",
+  "recommendationDetailTitle": "সুপারিশের বিবরণ",
+  "compositeReadingLabel": "সমন্বিত ফলাফল",
+  "editFarm": "খামার সম্পাদনা করুন",
+  "editFarmTooltip": "খামার সম্পাদনা করুন",
+  "updateFarmError": "খামার হালনাগাদ করা যায়নি। আবার চেষ্টা করুন।"
 }

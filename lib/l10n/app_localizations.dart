@@ -631,6 +631,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply.'**
   String get placeholderAgentReply;
+
+  /// No description provided for @viewHistoryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'View history'**
+  String get viewHistoryButton;
+
+  /// No description provided for @recommendationHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation history'**
+  String get recommendationHistoryTitle;
+
+  /// No description provided for @noHistoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No recommendations yet.'**
+  String get noHistoryMessage;
+
+  /// No description provided for @recommendationDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation detail'**
+  String get recommendationDetailTitle;
+
+  /// No description provided for @compositeReadingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Composite reading'**
+  String get compositeReadingLabel;
+
+  /// No description provided for @editFarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit farm'**
+  String get editFarm;
+
+  /// No description provided for @editFarmTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit farm'**
+  String get editFarmTooltip;
+
+  /// No description provided for @updateFarmError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update farm. Please try again.'**
+  String get updateFarmError;
 }
 
 class _AppLocalizationsDelegate

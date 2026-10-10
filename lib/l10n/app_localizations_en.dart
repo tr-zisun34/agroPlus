@@ -313,4 +313,28 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get placeholderAgentReply =>
       'Thanks for your message! Real farm assistant responses are coming soon — for now this is a placeholder reply.';
+
+  @override
+  String get viewHistoryButton => 'View history';
+
+  @override
+  String get recommendationHistoryTitle => 'Recommendation history';
+
+  @override
+  String get noHistoryMessage => 'No recommendations yet.';
+
+  @override
+  String get recommendationDetailTitle => 'Recommendation detail';
+
+  @override
+  String get compositeReadingLabel => 'Composite reading';
+
+  @override
+  String get editFarm => 'Edit farm';
+
+  @override
+  String get editFarmTooltip => 'Edit farm';
+
+  @override
+  String get updateFarmError => 'Could not update farm. Please try again.';
 }
