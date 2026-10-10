@@ -428,6 +428,18 @@ abstract class AppLocalizations {
   /// **'Could not load live conditions.'**
   String get conditionsLoadError;
 
+  /// No description provided for @forecastTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'7-day forecast'**
+  String get forecastTitle;
+
+  /// No description provided for @forecastLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the forecast.'**
+  String get forecastLoadError;
+
   /// No description provided for @farmDetailLoadError.
   ///
   /// In en, this message translates to:
@@ -584,6 +596,18 @@ abstract class AppLocalizations {
   /// **'Growing season'**
   String get growingSeasonLabel;
 
+  /// No description provided for @whyThisCropButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Why this crop?'**
+  String get whyThisCropButton;
+
+  /// No description provided for @whyThisCropQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Why do you recommend {crop} for my land?'**
+  String whyThisCropQuestion(String crop);
+
   /// No description provided for @yieldAndCostTitle.
   ///
   /// In en, this message translates to:
@@ -637,6 +661,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Estimated total cost'**
   String get totalCostLabel;
+
+  /// No description provided for @overBudgetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Over budget'**
+  String get overBudgetLabel;
+
+  /// No description provided for @overBudgetWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This exceeds your budget of {budget} BDT by {difference} BDT.'**
+  String overBudgetWarning(String budget, String difference);
 
   /// No description provided for @profitEstimateTitle.
   ///

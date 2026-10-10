@@ -80,6 +80,8 @@
     }
   },
   "conditionsLoadError": "Could not load live conditions.",
+  "forecastTitle": "7-day forecast",
+  "forecastLoadError": "Could not load the forecast.",
   "farmDetailLoadError": "Could not load land details.",
   "recommendationLoadError": "Could not load your recommendation.",
   "savePointError": "Could not save this point. Please try again.",
@@ -116,6 +118,13 @@
   "recommendationListTitle": "Recommended crops",
   "selectCropHint": "Select a crop to see seed cost, growing season, and profit estimate",
   "growingSeasonLabel": "Growing season",
+  "whyThisCropButton": "Why this crop?",
+  "whyThisCropQuestion": "Why do you recommend {crop} for my land?",
+  "@whyThisCropQuestion": {
+    "placeholders": {
+      "crop": { "type": "String" }
+    }
+  },
   "yieldAndCostTitle": "Yield & price",
   "marketPriceLabel": "Market price",
   "costBreakdownTitle": "Cost breakdown",
@@ -125,6 +134,14 @@
   "fertilizerCostUnavailableNote": "Fertilizer cost not available for this crop yet",
   "otherCostLabel": "Other costs (labor, irrigation, land prep)",
   "totalCostLabel": "Estimated total cost",
+  "overBudgetLabel": "Over budget",
+  "overBudgetWarning": "This exceeds your budget of {budget} BDT by {difference} BDT.",
+  "@overBudgetWarning": {
+    "placeholders": {
+      "budget": { "type": "String" },
+      "difference": { "type": "String" }
+    }
+  },
   "profitEstimateTitle": "Profit estimate",
   "grossRevenueLabel": "Gross revenue",
   "cropDetailLoadError": "Could not load harvest details for this crop",

@@ -7,10 +7,11 @@ import 'chat_provider.dart';
 import 'quick_chips.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key, required this.farmId, required this.farmName});
+  const ChatScreen({super.key, required this.farmId, required this.farmName, this.autoSendMessage});
 
   final String farmId;
   final String farmName;
+  final String? autoSendMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,7 @@ class ChatScreen extends StatelessWidget {
         farmId: farmId,
         greeting: l10n.chatGreeting(farmName),
         errorReply: l10n.chatErrorReply,
+        autoSendMessage: autoSendMessage,
       )..load(),
       child: _ChatScreenBody(farmName: farmName),
     );

@@ -5,10 +5,18 @@ import 'crop_harvest_detail_screen.dart';
 import 'farm_provider.dart' show RecommendedCrop;
 
 class RecommendationListScreen extends StatelessWidget {
-  const RecommendationListScreen({super.key, required this.farmId, required this.topCrops});
+  const RecommendationListScreen({
+    super.key,
+    required this.farmId,
+    required this.farmName,
+    required this.topCrops,
+    required this.budget,
+  });
 
   final String farmId;
+  final String farmName;
   final List<RecommendedCrop> topCrops;
+  final double budget;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,8 @@ class RecommendationListScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 12),
-          for (final crop in topCrops) _CropListTile(farmId: farmId, crop: crop),
+          for (final crop in topCrops)
+            _CropListTile(farmId: farmId, farmName: farmName, crop: crop, budget: budget),
         ],
       ),
     );
@@ -32,16 +41,24 @@ class RecommendationListScreen extends StatelessWidget {
 }
 
 class _CropListTile extends StatelessWidget {
-  const _CropListTile({required this.farmId, required this.crop});
+  const _CropListTile({
+    required this.farmId,
+    required this.farmName,
+    required this.crop,
+    required this.budget,
+  });
 
   final String farmId;
+  final String farmName;
   final RecommendedCrop crop;
+  final double budget;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final cropName = crop.crop.isEmpty ? crop.crop : crop.crop[0].toUpperCase() + crop.crop.substring(1);
+    final isOverBudget = crop.totalCost != null && crop.totalCost! > budget;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -55,9 +72,32 @@ class _CropListTile extends StatelessWidget {
           ),
         ),
         title: Text(cropName, style: Theme.of(context).textTheme.titleMedium),
-        subtitle: crop.netProfit != null
-            ? Text('${l10n.netProfitLabel}: ${crop.netProfit!.toStringAsFixed(0)} BDT')
-            : Text(l10n.profitComingSoonNote),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              crop.netProfit != null
+                  ? '${l10n.netProfitLabel}: ${crop.netProfit!.toStringAsFixed(0)} BDT'
+                  : l10n.profitComingSoonNote,
+            ),
+            if (isOverBudget)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.warning_amber_rounded, size: 14, color: colorScheme.error),
+                    const SizedBox(width: 4),
+                    Text(
+                      l10n.overBudgetLabel,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.error),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -69,7 +109,12 @@ class _CropListTile extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => CropHarvestDetailScreen(farmId: farmId, crop: crop.crop),
+              builder: (_) => CropHarvestDetailScreen(
+                farmId: farmId,
+                farmName: farmName,
+                crop: crop.crop,
+                budget: budget,
+              ),
             ),
           );
         },

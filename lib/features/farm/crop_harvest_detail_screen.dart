@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../chat/chat_screen.dart';
 import 'crop_detail_provider.dart';
 
 const _fertilizerDisplayNames = {
@@ -14,24 +15,40 @@ const _fertilizerDisplayNames = {
 };
 
 class CropHarvestDetailScreen extends StatelessWidget {
-  const CropHarvestDetailScreen({super.key, required this.farmId, required this.crop});
+  const CropHarvestDetailScreen({
+    super.key,
+    required this.farmId,
+    required this.farmName,
+    required this.crop,
+    required this.budget,
+  });
 
   final String farmId;
+  final String farmName;
   final String crop;
+  final double budget;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => CropDetailProvider(farmId, crop)..load(),
-      child: _CropHarvestDetailBody(crop: crop),
+      child: _CropHarvestDetailBody(farmId: farmId, farmName: farmName, crop: crop, budget: budget),
     );
   }
 }
 
 class _CropHarvestDetailBody extends StatelessWidget {
-  const _CropHarvestDetailBody({required this.crop});
+  const _CropHarvestDetailBody({
+    required this.farmId,
+    required this.farmName,
+    required this.crop,
+    required this.budget,
+  });
 
+  final String farmId;
+  final String farmName;
   final String crop;
+  final double budget;
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +76,29 @@ class _CropHarvestDetailBody extends StatelessWidget {
       );
     }
 
+    final cropName = crop.isEmpty ? crop : crop[0].toUpperCase() + crop.substring(1);
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ChatScreen(
+                    farmId: farmId,
+                    farmName: farmName,
+                    autoSendMessage: l10n.whyThisCropQuestion(cropName),
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.lightbulb_outline, size: 18),
+            label: Text(l10n.whyThisCropButton),
+          ),
+        ),
         if (detail.seasonLabel != null)
           Card(
             child: Padding(
@@ -146,6 +183,19 @@ class _CropHarvestDetailBody extends StatelessWidget {
               children: [
                 Text(l10n.profitEstimateTitle, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
+                if (detail.totalCost > budget)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      l10n.overBudgetWarning(
+                        budget.toStringAsFixed(0),
+                        (detail.totalCost - budget).toStringAsFixed(0),
+                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                    ),
+                  ),
                 _DetailRow(label: l10n.grossRevenueLabel, value: '${detail.grossRevenue.toStringAsFixed(0)} BDT'),
                 _DetailRow(label: l10n.totalCostLabel, value: '- ${detail.totalCost.toStringAsFixed(0)} BDT'),
                 const Divider(height: 24),

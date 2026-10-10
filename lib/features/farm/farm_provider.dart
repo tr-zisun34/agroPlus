@@ -27,6 +27,29 @@ class Conditions {
   }
 }
 
+class ForecastDay {
+  const ForecastDay({
+    required this.date,
+    required this.tempMaxC,
+    required this.tempMinC,
+    required this.precipitationMm,
+  });
+
+  final String date;
+  final double tempMaxC;
+  final double tempMinC;
+  final double precipitationMm;
+
+  factory ForecastDay.fromJson(Map<String, dynamic> json) {
+    return ForecastDay(
+      date: json['date'] as String,
+      tempMaxC: (json['temp_max_c'] as num).toDouble(),
+      tempMinC: (json['temp_min_c'] as num).toDouble(),
+      precipitationMm: (json['precipitation_mm'] as num).toDouble(),
+    );
+  }
+}
+
 class SoilPoint {
   const SoilPoint({required this.pointLabel, required this.n, required this.p, required this.k, required this.ph});
 
@@ -54,6 +77,7 @@ class RecommendedCrop {
     required this.confidence,
     this.yieldEstimate,
     this.netProfit,
+    this.totalCost,
   });
 
   final int rank;
@@ -61,6 +85,7 @@ class RecommendedCrop {
   final double confidence;
   final double? yieldEstimate;
   final double? netProfit;
+  final double? totalCost;
 
   factory RecommendedCrop.fromJson(Map<String, dynamic> json) {
     return RecommendedCrop(
@@ -69,6 +94,7 @@ class RecommendedCrop {
       confidence: (json['confidence'] as num).toDouble(),
       yieldEstimate: (json['yield_estimate'] as num?)?.toDouble(),
       netProfit: (json['net_profit'] as num?)?.toDouble(),
+      totalCost: (json['total_cost'] as num?)?.toDouble(),
     );
   }
 }
@@ -134,15 +160,20 @@ class FarmDetailProvider extends ChangeNotifier {
   String? recommendationErrorMessage;
   Recommendation? recommendation;
 
+  bool isLoadingForecast = true;
+  String? forecastErrorMessage;
+  List<ForecastDay> forecast = [];
+
   bool get isReady => !isLoadingFarm && !isLoadingConditions;
 
   Future<void> initialize() async {
     await loadFarm();
     if (farm != null) {
-      await Future.wait([loadConditions(), loadRecommendation()]);
+      await Future.wait([loadConditions(), loadRecommendation(), loadForecast()]);
     } else {
       isLoadingConditions = false;
       isLoadingRecommendation = false;
+      isLoadingForecast = false;
       notifyListeners();
     }
   }
@@ -176,6 +207,24 @@ class FarmDetailProvider extends ChangeNotifier {
     }
 
     isLoadingConditions = false;
+    notifyListeners();
+  }
+
+  Future<void> loadForecast() async {
+    isLoadingForecast = true;
+    forecastErrorMessage = null;
+    notifyListeners();
+
+    try {
+      final response = await ApiClient.instance.dio.get('/farms/$farmId/forecast');
+      forecast = (response.data as List)
+          .map((item) => ForecastDay.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } on DioException {
+      forecastErrorMessage = 'forecastLoadError';
+    }
+
+    isLoadingForecast = false;
     notifyListeners();
   }
 

@@ -10,9 +10,9 @@ from app.models.farm import Farm
 from app.models.farmer import Farmer
 from app.models.recommendation import Recommendation
 from app.schemas.district import DistrictOut
-from app.schemas.farm import ConditionsOut, FarmCreate, FarmOut, FarmUpdate
+from app.schemas.farm import ConditionsOut, FarmCreate, FarmOut, FarmUpdate, ForecastDayOut
 from app.services.sampling_service import required_points_for_area
-from app.services.weather_service import WeatherServiceError, fetch_current_conditions
+from app.services.weather_service import WeatherServiceError, fetch_current_conditions, fetch_forecast
 
 router = APIRouter(prefix="/farms", tags=["farms"])
 
@@ -121,6 +121,31 @@ async def get_farm_conditions(
         )
 
     return ConditionsOut(**conditions)
+
+
+@router.get("/{farm_id}/forecast", response_model=list[ForecastDayOut])
+async def get_farm_forecast(
+    farm_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_farmer: Farmer = Depends(get_current_farmer),
+):
+    farm = _get_owned_farm(farm_id, current_farmer, db)
+
+    if farm.district.center_lat is None or farm.district.center_lng is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Weather data unavailable for this district",
+        )
+
+    try:
+        forecast = await fetch_forecast(farm.district.center_lat, farm.district.center_lng)
+    except WeatherServiceError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Could not fetch forecast right now",
+        )
+
+    return [ForecastDayOut(**day) for day in forecast]
 
 
 @router.patch("/{farm_id}", response_model=FarmOut)

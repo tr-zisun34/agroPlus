@@ -20,11 +20,12 @@ class ChatMessage {
 }
 
 class ChatProvider extends ChangeNotifier {
-  ChatProvider({required this.farmId, required this.greeting, required this.errorReply});
+  ChatProvider({required this.farmId, required this.greeting, required this.errorReply, this.autoSendMessage});
 
   final String farmId;
   final String greeting;
   final String errorReply;
+  final String? autoSendMessage;
   final List<ChatMessage> _messages = [];
 
   List<ChatMessage> get messages => List.unmodifiable(_messages);
@@ -52,6 +53,10 @@ class ChatProvider extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
+
+    if (autoSendMessage != null) {
+      await sendMessage(autoSendMessage!);
+    }
   }
 
   Future<void> sendMessage(String text) async {

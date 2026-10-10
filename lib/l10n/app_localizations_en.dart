@@ -202,6 +202,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get conditionsLoadError => 'Could not load live conditions.';
 
   @override
+  String get forecastTitle => '7-day forecast';
+
+  @override
+  String get forecastLoadError => 'Could not load the forecast.';
+
+  @override
   String get farmDetailLoadError => 'Could not load land details.';
 
   @override
@@ -288,6 +294,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get growingSeasonLabel => 'Growing season';
 
   @override
+  String get whyThisCropButton => 'Why this crop?';
+
+  @override
+  String whyThisCropQuestion(String crop) {
+    return 'Why do you recommend $crop for my land?';
+  }
+
+  @override
   String get yieldAndCostTitle => 'Yield & price';
 
   @override
@@ -315,6 +329,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get totalCostLabel => 'Estimated total cost';
+
+  @override
+  String get overBudgetLabel => 'Over budget';
+
+  @override
+  String overBudgetWarning(String budget, String difference) {
+    return 'This exceeds your budget of $budget BDT by $difference BDT.';
+  }
 
   @override
   String get profitEstimateTitle => 'Profit estimate';

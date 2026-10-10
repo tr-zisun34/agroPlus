@@ -202,6 +202,12 @@ class AppLocalizationsBn extends AppLocalizations {
   String get conditionsLoadError => 'বর্তমান পরিবেশের তথ্য লোড করা যায়নি।';
 
   @override
+  String get forecastTitle => '৭ দিনের পূর্বাভাস';
+
+  @override
+  String get forecastLoadError => 'পূর্বাভাস লোড করা যায়নি।';
+
+  @override
   String get farmDetailLoadError => 'জমির বিবরণ লোড করা যায়নি।';
 
   @override
@@ -289,6 +295,14 @@ class AppLocalizationsBn extends AppLocalizations {
   String get growingSeasonLabel => 'চাষের মৌসুম';
 
   @override
+  String get whyThisCropButton => 'কেন এই ফসল?';
+
+  @override
+  String whyThisCropQuestion(String crop) {
+    return 'আপনি কেন আমার জমির জন্য $crop সুপারিশ করছেন?';
+  }
+
+  @override
   String get yieldAndCostTitle => 'ফলন ও দর';
 
   @override
@@ -316,6 +330,14 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get totalCostLabel => 'আনুমানিক মোট খরচ';
+
+  @override
+  String get overBudgetLabel => 'বাজেটের বাইরে';
+
+  @override
+  String overBudgetWarning(String budget, String difference) {
+    return 'এটি আপনার $budget টাকার বাজেট $difference টাকা অতিক্রম করে।';
+  }
 
   @override
   String get profitEstimateTitle => 'লাভের হিসাব';

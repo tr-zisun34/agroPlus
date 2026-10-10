@@ -54,3 +54,10 @@ class ConditionsOut(BaseModel):
     humidity: float
     rainfall: float
     fetched_at: datetime
+
+
+class ForecastDayOut(BaseModel):
+    date: str
+    temp_max_c: float
+    temp_min_c: float
+    precipitation_mm: float

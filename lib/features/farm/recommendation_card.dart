@@ -12,11 +12,13 @@ class RecommendationCard extends StatelessWidget {
     required this.farmId,
     required this.farmName,
     required this.recommendation,
+    required this.budget,
   });
 
   final String farmId;
   final String farmName;
   final Recommendation? recommendation;
+  final double budget;
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +107,12 @@ class RecommendationCard extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => RecommendationListScreen(farmId: farmId, topCrops: recommendation!.topCrops),
+              builder: (_) => RecommendationListScreen(
+                farmId: farmId,
+                farmName: farmName,
+                topCrops: recommendation!.topCrops,
+                budget: budget,
+              ),
             ),
           );
         },

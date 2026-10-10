@@ -16,9 +16,10 @@ from app.services.recommendation_service import (
     get_all_crop_scores,
     get_crop_detail,
     get_profit_estimate,
+    get_recommendation_explanation,
     get_soil_reading,
 )
-from app.services.weather_service import WeatherServiceError, fetch_current_conditions
+from app.services.weather_service import WeatherServiceError, fetch_current_conditions, fetch_forecast
 
 MODEL = "gpt-4o-mini"
 MAX_TOOL_ROUNDS = 5
@@ -91,6 +92,39 @@ TOOLS = [
             "yield estimate, and net profit. Use this when the farmer asks for alternatives or "
             "crops beyond the top-3 recommendation. Requires a saved soil reading and working "
             "weather data; returns a note if either is unavailable.",
+            "parameters": {"type": "object", "properties": {}},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_recommendation_explanation",
+            "description": "Get why a crop scored the way it did for this farm: its actual "
+            "soil/weather values compared against the typical range for that crop (from the "
+            "model's training data), plus which inputs the model weighs most heavily overall. "
+            "Use this when the farmer asks 'why rice?' or 'why does X suit my land?'. Requires "
+            "a saved soil reading and working weather data; returns a note if either is "
+            "unavailable.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "crop": {
+                        "type": "string",
+                        "description": "Crop name to explain, e.g. 'rice', 'mungbean'.",
+                    }
+                },
+                "required": ["crop"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather_forecast",
+            "description": "Get the next 7 days' forecast (daily high/low temperature and "
+            "total precipitation) for this farm's district. Use this for questions about "
+            "upcoming weather, rain, or planting/harvest timing this week — get_live_weather "
+            "only covers right now, not what's coming.",
             "parameters": {"type": "object", "properties": {}},
         },
     },
@@ -206,6 +240,42 @@ async def _run_get_other_crop_options(farm: Farm, db: Session) -> dict:
     return {"status": "ok", "crops_ranked_by_confidence": options}
 
 
+async def _run_get_recommendation_explanation(farm: Farm, crop: str, db: Session) -> dict:
+    reading = get_soil_reading(farm.id, db)
+    if reading is None:
+        return {"status": "unavailable", "note": "No soil reading saved yet for this farm."}
+    if farm.district.center_lat is None or farm.district.center_lng is None:
+        return {"status": "unavailable", "note": "No coordinates on file for this district."}
+    try:
+        conditions = await fetch_current_conditions(farm.district.center_lat, farm.district.center_lng)
+    except WeatherServiceError:
+        return {"status": "unavailable", "note": "Weather service request failed."}
+
+    explanation = get_recommendation_explanation(
+        crop=crop,
+        n=reading["n"],
+        p=reading["p"],
+        k=reading["k"],
+        temperature=conditions["temperature"],
+        humidity=conditions["humidity"],
+        ph=reading["ph"],
+        rainfall=conditions["rainfall"],
+    )
+    if explanation is None:
+        return {"status": "unavailable", "note": f"'{crop}' isn't a crop the model recognizes."}
+    return {"status": "ok", "explanation": explanation}
+
+
+async def _run_get_weather_forecast(farm: Farm) -> dict:
+    if farm.district.center_lat is None or farm.district.center_lng is None:
+        return {"status": "unavailable", "note": "No coordinates on file for this district."}
+    try:
+        forecast = await fetch_forecast(farm.district.center_lat, farm.district.center_lng)
+    except WeatherServiceError:
+        return {"status": "unavailable", "note": "Weather service request failed."}
+    return {"status": "ok", "forecast": forecast}
+
+
 async def _dispatch_tool_call(name: str, arguments: dict, farm: Farm, db: Session) -> dict:
     if name == "get_soil_reading":
         return _run_get_soil_reading(farm, db)
@@ -217,6 +287,10 @@ async def _dispatch_tool_call(name: str, arguments: dict, farm: Farm, db: Sessio
         return _run_get_crop_detail(farm, arguments.get("crop", ""), db)
     if name == "get_other_crop_options":
         return await _run_get_other_crop_options(farm, db)
+    if name == "get_weather_forecast":
+        return await _run_get_weather_forecast(farm)
+    if name == "get_recommendation_explanation":
+        return await _run_get_recommendation_explanation(farm, arguments.get("crop", ""), db)
     return {"status": "error", "note": f"Unknown tool '{name}'."}
 
 

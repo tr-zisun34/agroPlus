@@ -7,6 +7,7 @@ import 'farm_provider.dart';
 import 'live_conditions_card.dart';
 import 'recommendation_card.dart';
 import 'soil_reading_card.dart';
+import 'weather_forecast_card.dart';
 
 class FarmScreen extends StatelessWidget {
   const FarmScreen({super.key, required this.farmId, this.initialFarmName});
@@ -61,6 +62,11 @@ class _FarmScreenBody extends StatelessWidget {
                         conditions: provider.conditions,
                         onRefresh: provider.loadConditions,
                       ),
+                      WeatherForecastCard(
+                        isLoading: provider.isLoadingForecast,
+                        errorMessage: provider.forecastErrorMessage,
+                        forecast: provider.forecast,
+                      ),
                       SoilReadingCard(
                         farmId: farmId,
                         sizeAcres: provider.farm!.sizeAcres,
@@ -70,6 +76,7 @@ class _FarmScreenBody extends StatelessWidget {
                         farmId: farmId,
                         farmName: provider.farm!.farmName,
                         recommendation: provider.recommendation,
+                        budget: provider.farm!.budget,
                       ),
                     ],
                   ),

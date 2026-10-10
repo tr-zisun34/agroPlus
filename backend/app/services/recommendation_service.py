@@ -1,9 +1,5 @@
-"""Independently callable recommendation tools — designed so a future chat agent can call
-these directly via OpenAI function calling, not just internal helpers for one endpoint.
-
-get_soil_reading, get_recommendation, get_profit_estimate, and get_crop_detail are implemented
-for this increment. get_explanation depends on an OpenAI integration that doesn't exist yet —
-deferred to a later increment.
+"""Independently callable recommendation tools — designed so a chat agent can call these
+directly via OpenAI function calling, not just internal helpers for one endpoint.
 """
 
 import pathlib
@@ -20,6 +16,9 @@ from app.models.recommendation import Recommendation
 
 FEATURE_COLUMNS = ["N", "P", "K", "temperature", "humidity", "ph", "rainfall"]
 _ARTIFACTS_DIR = pathlib.Path(__file__).resolve().parent.parent / "ml_artifacts"
+_TRAINING_DATA_PATH = (
+    pathlib.Path(__file__).resolve().parent.parent.parent.parent / "docs" / "dataset" / "Crop_recommendation.csv"
+)
 
 # Scoped to the crops crop_economics actually has yield+price for (see seed_crop_economics.py).
 # The underlying Kaggle model still knows all 22 crops, but for this development phase we only
@@ -30,6 +29,7 @@ SUPPORTED_CROPS = {"rice", "maize", "chickpea", "mungbean", "blackgram", "lentil
 _xgb_model = None
 _rf_model = None
 _label_encoder = None
+_crop_feature_stats: dict | None = None
 
 
 def get_soil_reading(farm_id: uuid.UUID, db: Session) -> dict | None:
@@ -199,4 +199,78 @@ def get_crop_detail(crop: str, size_acres: float, db: Session) -> dict | None:
         "total_cost": total_cost,
         "net_profit": net_profit,
         "season_label": season_label,
+    }
+
+
+def _load_crop_feature_stats() -> dict:
+    """Per-crop min/max/mean for each feature, computed once from the same training CSV the
+    model was built from, cached for the life of the process — same lazy-load-once pattern as
+    _load_models()."""
+    global _crop_feature_stats
+    if _crop_feature_stats is None:
+        df = pd.read_csv(_TRAINING_DATA_PATH)
+        stats: dict[str, dict[str, dict[str, float]]] = {}
+        for crop, group in df.groupby("label"):
+            stats[crop] = {
+                feature: {
+                    "min": float(group[feature].min()),
+                    "max": float(group[feature].max()),
+                    "mean": float(group[feature].mean()),
+                }
+                for feature in FEATURE_COLUMNS
+            }
+        _crop_feature_stats = stats
+    return _crop_feature_stats
+
+
+def get_recommendation_explanation(
+    crop: str, n: float, p: float, k: float, temperature: float, humidity: float, ph: float, rainfall: float
+) -> dict | None:
+    """Grounds "why this crop?" in real numbers instead of letting a chat agent guess: this
+    farm's actual feature values compared against the typical (min/max/mean) range for the
+    given crop in the training data, plus the model's global feature importances (which inputs
+    the ensemble weighs most heavily overall — not specific to this one prediction, since that
+    would need per-instance explainability like SHAP, out of scope here).
+
+    Returns None if the crop isn't one the model was trained on at all (shouldn't happen for
+    anything get_recommendation/get_all_crop_scores would have returned, but defends against a
+    typo'd crop name reaching this from the chat agent).
+    """
+    feature_stats = _load_crop_feature_stats()
+    if crop.lower() not in feature_stats:
+        return None
+
+    xgb_model, _, _ = _load_models()
+    farm_values = {
+        "N": n,
+        "P": p,
+        "K": k,
+        "temperature": temperature,
+        "humidity": humidity,
+        "ph": ph,
+        "rainfall": rainfall,
+    }
+    crop_stats = feature_stats[crop.lower()]
+
+    feature_comparison = [
+        {
+            "feature": feature,
+            "farm_value": farm_values[feature],
+            "typical_min": crop_stats[feature]["min"],
+            "typical_max": crop_stats[feature]["max"],
+            "typical_mean": crop_stats[feature]["mean"],
+            "in_range": crop_stats[feature]["min"] <= farm_values[feature] <= crop_stats[feature]["max"],
+        }
+        for feature in FEATURE_COLUMNS
+    ]
+
+    model_feature_importance = [
+        {"feature": feature, "importance": float(importance)}
+        for feature, importance in zip(FEATURE_COLUMNS, xgb_model.feature_importances_)
+    ]
+
+    return {
+        "crop": crop.lower(),
+        "feature_comparison": feature_comparison,
+        "model_feature_importance": sorted(model_feature_importance, key=lambda x: -x["importance"]),
     }
