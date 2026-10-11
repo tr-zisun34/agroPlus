@@ -115,11 +115,24 @@ class _DetailCropRow extends StatelessWidget {
               CircleAvatar(
                 radius: 14,
                 backgroundColor: colorScheme.primaryContainer,
-                child: Text(
-                  '${crop.rank}',
-                  style:
-                      TextStyle(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold, fontSize: 13),
-                ),
+                child: crop.season != null
+                    ? Text(
+                        crop.season!,
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 9,
+                        ),
+                        textAlign: TextAlign.center,
+                      )
+                    : Text(
+                        '${crop.rank}',
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -138,6 +151,14 @@ class _DetailCropRow extends StatelessWidget {
                 '${l10n.yieldEstimateLabel}: ${crop.yieldEstimate!.toStringAsFixed(0)} kg · '
                 '${l10n.netProfitLabel}: ${crop.netProfit!.toStringAsFixed(0)} BDT',
                 style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          if (crop.rotationNote != null)
+            Padding(
+              padding: const EdgeInsets.only(left: 40, top: 2),
+              child: Text(
+                crop.rotationNote!,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
               ),
             ),
         ],
