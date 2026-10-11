@@ -78,6 +78,8 @@ class RecommendedCrop {
     this.yieldEstimate,
     this.netProfit,
     this.totalCost,
+    this.season,
+    this.rotationNote,
   });
 
   final int rank;
@@ -86,6 +88,8 @@ class RecommendedCrop {
   final double? yieldEstimate;
   final double? netProfit;
   final double? totalCost;
+  final String? season;
+  final String? rotationNote;
 
   factory RecommendedCrop.fromJson(Map<String, dynamic> json) {
     return RecommendedCrop(
@@ -95,6 +99,8 @@ class RecommendedCrop {
       yieldEstimate: (json['yield_estimate'] as num?)?.toDouble(),
       netProfit: (json['net_profit'] as num?)?.toDouble(),
       totalCost: (json['total_cost'] as num?)?.toDouble(),
+      season: json['season'] as String?,
+      rotationNote: json['rotation_note'] as String?,
     );
   }
 }

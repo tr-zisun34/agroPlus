@@ -30,6 +30,8 @@ class RecommendationCropOut(BaseModel):
     yield_estimate: float | None
     net_profit: float | None
     total_cost: float | None
+    season: str | None
+    rotation_note: str | None
 
 
 class RecommendationOut(BaseModel):

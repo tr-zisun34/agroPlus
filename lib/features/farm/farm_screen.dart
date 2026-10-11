@@ -77,6 +77,7 @@ class _FarmScreenBody extends StatelessWidget {
                         farmName: provider.farm!.farmName,
                         recommendation: provider.recommendation,
                         budget: provider.farm!.budget,
+                        croppingPattern: provider.farm!.croppingPattern,
                       ),
                     ],
                   ),

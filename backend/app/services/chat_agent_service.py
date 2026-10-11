@@ -13,6 +13,7 @@ from app.core.config import settings
 from app.models.farm import Farm
 from app.models.recommendation import Recommendation
 from app.services.recommendation_service import (
+    crops_at_rotation_limit,
     get_all_crop_scores,
     get_crop_detail,
     get_profit_estimate,
@@ -132,6 +133,7 @@ TOOLS = [
 
 
 def _build_system_prompt(farm: Farm) -> str:
+    previous_crops = ", ".join(c for c in (farm.previous_crop_1, farm.previous_crop_2) if c) or "none recorded"
     return (
         "You are AgroPlus's farm assistant, helping a Bangladeshi farmer understand their farm's "
         "soil, weather, and crop recommendations. You are chatting about one specific farm:\n"
@@ -141,15 +143,22 @@ def _build_system_prompt(farm: Farm) -> str:
         f"- Soil type: {farm.soil_type}\n"
         f"- Water availability: {farm.water_availability}\n"
         f"- Target season: {farm.target_season}\n"
-        f"- Budget: {farm.budget} BDT\n\n"
+        f"- Budget: {farm.budget} BDT\n"
+        f"- Cropping pattern: {farm.cropping_pattern}\n"
+        f"- Last two crops harvested here (most recent first): {previous_crops}\n\n"
         "Use the provided tools to fetch this farm's actual soil reading, weather, "
         "recommendation, and crop economics data rather than guessing. Only state numbers that "
         "came from a tool call. Never assume a prerequisite (like 'you need to add a soil "
         "sample first') without checking — call the relevant tool and let its 'unavailable' "
         "status tell you that, rather than guessing it. If the farmer asks for crop suggestions "
         "beyond the saved top-3, or for alternatives, or 'what else could I grow', always call "
-        "get_other_crop_options before replying — do not assume more data is needed. Keep "
-        "answers short and practical. Reply in the same language the farmer is writing in."
+        "get_other_crop_options before replying — do not assume more data is needed. A crop is "
+        "never recommended a third time in a row on the same land — if the farmer asks why a "
+        "familiar crop is missing, that rotation rule (shown above) is usually why. If "
+        "cropping_pattern is 'double' or 'triple', get_current_recommendation returns a "
+        "season-sequenced plan (one crop per season) rather than ranked alternatives — present "
+        "it that way, by season, not as a ranked top-3. Keep answers short and practical. Reply "
+        "in the same language the farmer is writing in."
     )
 
 
@@ -193,6 +202,8 @@ def _run_get_current_recommendation(farm: Farm, db: Session) -> dict:
                 "confidence": c.confidence,
                 "yield_estimate_kg": c.yield_estimate,
                 "net_profit_bdt": c.net_profit,
+                "season": c.season,
+                "rotation_note": c.rotation_note,
             }
             for c in recommendation.top_crops
         ],
@@ -225,6 +236,7 @@ async def _run_get_other_crop_options(farm: Farm, db: Session) -> dict:
         humidity=conditions["humidity"],
         ph=reading["ph"],
         rainfall=conditions["rainfall"],
+        exclude_crops=crops_at_rotation_limit([farm.previous_crop_1, farm.previous_crop_2]),
     )
     options = []
     for item in scores:

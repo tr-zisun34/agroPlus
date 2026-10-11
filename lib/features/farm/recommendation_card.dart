@@ -13,12 +13,14 @@ class RecommendationCard extends StatelessWidget {
     required this.farmName,
     required this.recommendation,
     required this.budget,
+    required this.croppingPattern,
   });
 
   final String farmId;
   final String farmName;
   final Recommendation? recommendation;
   final double budget;
+  final String croppingPattern;
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +114,7 @@ class RecommendationCard extends StatelessWidget {
                 farmName: farmName,
                 topCrops: recommendation!.topCrops,
                 budget: budget,
+                croppingPattern: croppingPattern,
               ),
             ),
           );

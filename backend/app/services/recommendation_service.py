@@ -26,6 +26,12 @@ _TRAINING_DATA_PATH = (
 # coffee, most fruits, etc.) are masked out of get_recommendation rather than retraining.
 SUPPORTED_CROPS = {"rice", "maize", "chickpea", "mungbean", "blackgram", "lentil", "jute", "mango"}
 
+# Calendar order used for both slot selection (which seasons get a crop) and display rank.
+MULTI_CROPPING_SEASONS = ["Rabi", "Aus", "Aman"]
+# Mango is a perennial tree crop, not something grown on a seasonal rotation within one year —
+# excluded from the double/triple planner; it keeps full single-cropping support unchanged.
+MULTI_CROPPING_EXCLUDED_CROPS = {"mango"}
+
 _xgb_model = None
 _rf_model = None
 _label_encoder = None
@@ -75,13 +81,37 @@ def _print_decision_tree(rf_model, label_encoder) -> None:
     print("--- end decision tree ---\n")
 
 
+def crops_at_rotation_limit(previous_crops: list[str | None]) -> set[str]:
+    """Crop names that already appear twice (case-insensitive) among the given history —
+    rotation-blocked from being recommended a third time. Shared by the single-season ranking,
+    the chat's "other crop options" tool, and the double/triple cropping planner, so the "no
+    crop more than twice in a row" rule is enforced identically everywhere crops get ranked."""
+    counts: dict[str, int] = {}
+    for crop in previous_crops:
+        if crop:
+            counts[crop.lower()] = counts.get(crop.lower(), 0) + 1
+    return {crop for crop, count in counts.items() if count >= 2}
+
+
 def get_all_crop_scores(
-    n: float, p: float, k: float, temperature: float, humidity: float, ph: float, rainfall: float
+    n: float,
+    p: float,
+    k: float,
+    temperature: float,
+    humidity: float,
+    ph: float,
+    rainfall: float,
+    exclude_crops: set[str] | None = None,
 ) -> list[dict]:
     """Every SUPPORTED_CROPS crop with its confidence, ensembled (simple average) from the
     XGBoost and Random Forest models trained on the Kaggle Crop Recommendation dataset,
     renormalized over just that subset and sorted descending. get_recommendation (the top-3
-    shown on the dashboard) and the chat agent's "other crop options" tool both slice this."""
+    shown on the dashboard) and the chat agent's "other crop options" tool both slice this.
+
+    exclude_crops drops rotation-blocked crops (see crops_at_rotation_limit) from the candidate
+    pool before ranking/renormalizing — a hard exclusion, not just a reorder, so a blocked crop
+    never appears at all rather than merely losing priority.
+    """
     xgb_model, rf_model, label_encoder = _load_models()
 
     features = pd.DataFrame([[n, p, k, temperature, humidity, ph, rainfall]], columns=FEATURE_COLUMNS)
@@ -90,7 +120,8 @@ def get_all_crop_scores(
     rf_proba = rf_model.predict_proba(features)[0]
     avg_proba = (xgb_proba + rf_proba) / 2
 
-    supported_mask = np.array([c in SUPPORTED_CROPS for c in label_encoder.classes_])
+    excluded = exclude_crops or set()
+    supported_mask = np.array([c in SUPPORTED_CROPS and c not in excluded for c in label_encoder.classes_])
     masked_proba = np.where(supported_mask, avg_proba, 0.0)
     masked_proba = masked_proba / masked_proba.sum()
 
@@ -102,12 +133,19 @@ def get_all_crop_scores(
 
 
 def get_recommendation(
-    n: float, p: float, k: float, temperature: float, humidity: float, ph: float, rainfall: float
+    n: float,
+    p: float,
+    k: float,
+    temperature: float,
+    humidity: float,
+    ph: float,
+    rainfall: float,
+    exclude_crops: set[str] | None = None,
 ) -> list[dict]:
     """Top-3 crops with confidence — see get_all_crop_scores for the full ranked list."""
     xgb_model, rf_model, label_encoder = _load_models()
     _print_decision_tree(rf_model, label_encoder)
-    return get_all_crop_scores(n, p, k, temperature, humidity, ph, rainfall)[:3]
+    return get_all_crop_scores(n, p, k, temperature, humidity, ph, rainfall, exclude_crops=exclude_crops)[:3]
 
 
 def get_profit_estimate(crop: str, size_acres: float, db: Session) -> dict | None:
@@ -274,3 +312,101 @@ def get_recommendation_explanation(
         "feature_comparison": feature_comparison,
         "model_feature_importance": sorted(model_feature_importance, key=lambda x: -x["importance"]),
     }
+
+
+def _economics_for_crop_in_season(crop: str, season: str, db: Session) -> list[CropEconomics]:
+    return db.query(CropEconomics).filter(CropEconomics.crop == crop, CropEconomics.season == season).all()
+
+
+def build_multi_crop_plan(
+    n: float,
+    p: float,
+    k: float,
+    temperature: float,
+    humidity: float,
+    ph: float,
+    rainfall: float,
+    size_acres: float,
+    pattern: str,
+    previous_crops: list[str | None],
+    db: Session,
+) -> list[dict]:
+    """Build a double ("pattern"="double") or triple ("triple") cropping plan: one crop per
+    growing season, each the highest-scoring rotation-safe candidate available in that season's
+    bucket (crop_economics.season, itself classified from BAMIS's cultivation-season text — see
+    seed_crop_economics.py). Mango is excluded (MULTI_CROPPING_EXCLUDED_CROPS) — a perennial
+    tree crop doesn't fit a within-year seasonal rotation.
+
+    Known limitation: every season bucket is scored against the same current soil + live-weather
+    reading passed in here — this doesn't model season-specific climate normals (e.g. Aus's
+    pre-monsoon heat vs. Rabi's dry winter). Which crops are *eligible* per season is accurate
+    (BAMIS-sourced); the *ranking* within a season is a same-snapshot approximation.
+
+    A crop (by name) can be selected at most twice counting previous_crops (the land's last two
+    harvests) plus any earlier picks in this same plan — see crops_at_rotation_limit. Returns
+    one dict per season that found an eligible candidate; a season with none (every candidate
+    rotation-blocked, or no economics data at all) is simply omitted rather than fabricated.
+    """
+    all_scores = get_all_crop_scores(n, p, k, temperature, humidity, ph, rainfall)
+    confidence_by_crop = {
+        s["crop"]: s["confidence"] for s in all_scores if s["crop"] not in MULTI_CROPPING_EXCLUDED_CROPS
+    }
+
+    rows = (
+        db.query(CropEconomics)
+        .filter(CropEconomics.season.isnot(None), CropEconomics.crop.in_(confidence_by_crop.keys()))
+        .all()
+    )
+    buckets: dict[str, list[CropEconomics]] = {season: [] for season in MULTI_CROPPING_SEASONS}
+    for row in rows:
+        if row.season in buckets:
+            buckets[row.season].append(row)
+
+    def top_confidence_in_bucket(season: str) -> float:
+        crops = {row.crop for row in buckets[season]}
+        return max((confidence_by_crop.get(c, 0.0) for c in crops), default=-1.0)
+
+    num_slots = 2 if pattern == "double" else 3
+    priority_seasons = sorted(MULTI_CROPPING_SEASONS, key=lambda s: -top_confidence_in_bucket(s))
+    priority_seasons = [s for s in priority_seasons if top_confidence_in_bucket(s) >= 0][:num_slots]
+
+    history = [c for c in previous_crops if c]
+    picks: dict[str, dict] = {}
+
+    for season in priority_seasons:
+        candidates = buckets[season]
+        crops_by_confidence = sorted({row.crop for row in candidates}, key=lambda c: -confidence_by_crop.get(c, 0.0))
+        top_crop = crops_by_confidence[0] if crops_by_confidence else None
+
+        blocked = crops_at_rotation_limit(history)
+        chosen_crop = next((crop for crop in crops_by_confidence if crop.lower() not in blocked), None)
+        if chosen_crop is None:
+            continue
+
+        crop_rows = _economics_for_crop_in_season(chosen_crop, season, db)
+        avg_yield = sum(r.yield_kg_per_acre for r in crop_rows) / len(crop_rows)
+        avg_price = sum(r.price_bdt_per_kg for r in crop_rows) / len(crop_rows)
+        avg_cost = sum(r.cost_bdt_per_acre for r in crop_rows) / len(crop_rows)
+
+        total_yield_kg = avg_yield * size_acres
+        total_cost = avg_cost * size_acres
+        gross_revenue = total_yield_kg * avg_price
+        net_profit = gross_revenue - total_cost
+
+        picks[season] = {
+            "crop": chosen_crop,
+            "season": season,
+            "confidence": confidence_by_crop.get(chosen_crop, 0.0),
+            "yield_estimate": total_yield_kg,
+            "net_profit": net_profit,
+            "total_cost": total_cost,
+            "rotation_note": (
+                f"{top_crop.capitalize()} skipped — already grown twice in a row; "
+                f"{chosen_crop.capitalize()} selected instead"
+                if top_crop and top_crop != chosen_crop
+                else None
+            ),
+        }
+        history.append(chosen_crop.lower())
+
+    return [picks[season] for season in MULTI_CROPPING_SEASONS if season in picks]

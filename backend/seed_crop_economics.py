@@ -90,6 +90,33 @@ SHEET_TO_VARIETIES = {
 }
 CROPS_WITHOUT_DAM_PRICE = {"jute", "mango"}
 
+# BAMIS season-text keyword -> one of Bangladesh's three growing seasons (same values as
+# Farm.target_season). Kharif-1/Kharif-2 are BAMIS's own names for Aus/Aman.
+SEASON_KEYWORDS = {
+    "Kharif-2": "Aman",
+    "Kharif-1": "Aus",
+    "Rabi": "Rabi",
+    "Boro": "Rabi",
+    "Aman": "Aman",
+    "Aus": "Aus",
+}
+
+
+def classify_season(season_label: str | None) -> str | None:
+    """Classify BAMIS's free-text cultivation season into Rabi/Aus/Aman by keyword. Several
+    crops have dual-season text (e.g. mungbean's "Kharif-1 / Rabi (Feb - May)") — the
+    earliest-mentioned season wins, since BAMIS lists the primary season first. Returns None
+    when nothing matches (e.g. Mango's "Perennial (May - Jul)") — expected, since perennial
+    crops aren't candidates for the seasonal multi-cropping planner anyway."""
+    if not season_label:
+        return None
+    best_position, best_season = None, None
+    for keyword, season in SEASON_KEYWORDS.items():
+        position = season_label.find(keyword)
+        if position != -1 and (best_position is None or position < best_position):
+            best_position, best_season = position, season
+    return best_season
+
 
 def midpoint(range_str: str) -> float:
     low, high = range_str.replace(",", "").split("-")
@@ -285,6 +312,7 @@ def build_rows(
                     "fertilizer_breakdown": fertilizer_breakdown or None,
                     "other_cost_bdt_per_acre": round(other_cost, 2),
                     "season_label": figures["season_label"],
+                    "season": classify_season(figures["season_label"]),
                     "source": source,
                     "as_of_date": today,
                 }

@@ -25,6 +25,9 @@ class Farm {
     required this.waterAvailability,
     required this.budget,
     required this.targetSeason,
+    required this.croppingPattern,
+    this.previousCrop1,
+    this.previousCrop2,
     required this.createdAt,
     this.lastRecommendationAt,
   });
@@ -38,6 +41,9 @@ class Farm {
   final String waterAvailability;
   final double budget;
   final String targetSeason;
+  final String croppingPattern;
+  final String? previousCrop1;
+  final String? previousCrop2;
   final DateTime createdAt;
   final DateTime? lastRecommendationAt;
 
@@ -52,6 +58,9 @@ class Farm {
       waterAvailability: json['water_availability'] as String,
       budget: (json['budget'] as num).toDouble(),
       targetSeason: json['target_season'] as String,
+      croppingPattern: json['cropping_pattern'] as String,
+      previousCrop1: json['previous_crop_1'] as String?,
+      previousCrop2: json['previous_crop_2'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
       lastRecommendationAt: json['last_recommendation_at'] != null
           ? DateTime.parse(json['last_recommendation_at'] as String)
@@ -108,6 +117,9 @@ class FarmProvider extends ChangeNotifier {
     required String waterAvailability,
     required double budget,
     required String targetSeason,
+    required String croppingPattern,
+    String? previousCrop1,
+    String? previousCrop2,
   }) async {
     try {
       await ApiClient.instance.dio.post(
@@ -121,6 +133,9 @@ class FarmProvider extends ChangeNotifier {
           'water_availability': waterAvailability,
           'budget': budget,
           'target_season': targetSeason,
+          'cropping_pattern': croppingPattern,
+          'previous_crop_1': previousCrop1,
+          'previous_crop_2': previousCrop2,
         },
       );
       await refresh();
@@ -141,6 +156,9 @@ class FarmProvider extends ChangeNotifier {
     required String waterAvailability,
     required double budget,
     required String targetSeason,
+    required String croppingPattern,
+    String? previousCrop1,
+    String? previousCrop2,
   }) async {
     try {
       await ApiClient.instance.dio.patch(
@@ -154,6 +172,9 @@ class FarmProvider extends ChangeNotifier {
           'water_availability': waterAvailability,
           'budget': budget,
           'target_season': targetSeason,
+          'cropping_pattern': croppingPattern,
+          'previous_crop_1': previousCrop1,
+          'previous_crop_2': previousCrop2,
         },
       );
       await refresh();

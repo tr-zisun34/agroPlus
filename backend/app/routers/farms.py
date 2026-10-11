@@ -35,6 +35,9 @@ def _to_farm_out(farm: Farm, db: Session) -> FarmOut:
         water_availability=farm.water_availability,
         budget=farm.budget,
         target_season=farm.target_season,
+        cropping_pattern=farm.cropping_pattern,
+        previous_crop_1=farm.previous_crop_1,
+        previous_crop_2=farm.previous_crop_2,
         created_at=farm.created_at,
         last_recommendation_at=last_recommendation.created_at if last_recommendation else None,
     )
@@ -81,6 +84,9 @@ def create_farm(
         water_availability=payload.water_availability,
         budget=payload.budget,
         target_season=payload.target_season,
+        cropping_pattern=payload.cropping_pattern,
+        previous_crop_1=payload.previous_crop_1,
+        previous_crop_2=payload.previous_crop_2,
     )
     db.add(farm)
     db.commit()

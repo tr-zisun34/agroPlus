@@ -43,5 +43,9 @@ class CropEconomics(Base):
     # Verbatim BAMIS cultivation-season text (e.g. "Kharif-2 (Jul - Dec)") — shown as-is rather
     # than converted to a day count, since several crops have dual/ambiguous seasons.
     season_label: Mapped[str | None] = mapped_column(String, nullable=True)
+    # season_label classified into one of Bangladesh's three growing seasons (same values as
+    # Farm.target_season), used to bucket crops for the double/triple cropping planner. Null
+    # when season_label couldn't be classified by keyword (see seed_crop_economics.py).
+    season: Mapped[str | None] = mapped_column(String, nullable=True)
     source: Mapped[str | None] = mapped_column(String, nullable=True)
     as_of_date: Mapped[date | None] = mapped_column(Date, nullable=True)

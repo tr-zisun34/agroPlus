@@ -9,6 +9,7 @@ from app.schemas.district import DistrictOut
 SoilType = Literal["Clay", "Loamy", "Sandy", "Silty"]
 WaterAvailability = Literal["Irrigated", "Rain-fed", "Limited"]
 TargetSeason = Literal["Rabi", "Aus", "Aman"]
+CroppingPattern = Literal["single", "double", "triple"]
 
 
 class FarmCreate(BaseModel):
@@ -20,6 +21,9 @@ class FarmCreate(BaseModel):
     water_availability: WaterAvailability
     budget: float = Field(gt=0)
     target_season: TargetSeason
+    cropping_pattern: CroppingPattern = "single"
+    previous_crop_1: str | None = None
+    previous_crop_2: str | None = None
 
 
 class FarmUpdate(BaseModel):
@@ -31,6 +35,9 @@ class FarmUpdate(BaseModel):
     water_availability: WaterAvailability | None = None
     budget: float | None = Field(default=None, gt=0)
     target_season: TargetSeason | None = None
+    cropping_pattern: CroppingPattern | None = None
+    previous_crop_1: str | None = None
+    previous_crop_2: str | None = None
 
 
 class FarmOut(BaseModel):
@@ -45,6 +52,9 @@ class FarmOut(BaseModel):
     water_availability: str
     budget: float
     target_season: str
+    cropping_pattern: str
+    previous_crop_1: str | None
+    previous_crop_2: str | None
     created_at: datetime
     last_recommendation_at: datetime | None = None
 

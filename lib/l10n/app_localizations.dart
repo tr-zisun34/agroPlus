@@ -350,6 +350,30 @@ abstract class AppLocalizations {
   /// **'Target season'**
   String get targetSeasonLabel;
 
+  /// No description provided for @croppingPatternLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cropping pattern'**
+  String get croppingPatternLabel;
+
+  /// No description provided for @previousCrop1Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Last crop harvested'**
+  String get previousCrop1Label;
+
+  /// No description provided for @previousCrop2Label.
+  ///
+  /// In en, this message translates to:
+  /// **'Second-last crop harvested'**
+  String get previousCrop2Label;
+
+  /// No description provided for @noneCropOption.
+  ///
+  /// In en, this message translates to:
+  /// **'None / first cultivation'**
+  String get noneCropOption;
+
   /// No description provided for @requiredValidation.
   ///
   /// In en, this message translates to:
@@ -589,6 +613,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a crop to see seed cost, growing season, and profit estimate'**
   String get selectCropHint;
+
+  /// No description provided for @cropPlanListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cropping plan'**
+  String get cropPlanListTitle;
+
+  /// No description provided for @selectCropPlanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One crop per season — select a crop to see its cost and profit estimate'**
+  String get selectCropPlanHint;
 
   /// No description provided for @growingSeasonLabel.
   ///

@@ -7,6 +7,10 @@ import 'farm_provider.dart';
 const _soilTypes = ['Clay', 'Loamy', 'Sandy', 'Silty'];
 const _waterAvailabilityOptions = ['Irrigated', 'Rain-fed', 'Limited'];
 const _targetSeasons = ['Rabi', 'Aus', 'Aman'];
+const _croppingPatterns = ['single', 'double', 'triple'];
+const _supportedCrops = ['rice', 'maize', 'chickpea', 'mungbean', 'blackgram', 'lentil', 'jute', 'mango'];
+
+String _capitalize(String s) => s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 
 Future<void> showAddFarmModal(BuildContext context, {Farm? existingFarm}) {
   return showModalBottomSheet<void>(
@@ -39,6 +43,9 @@ class _AddFarmModalState extends State<AddFarmModal> {
   String? _selectedSoilType;
   String? _selectedWaterAvailability;
   String? _selectedTargetSeason;
+  String _selectedCroppingPattern = 'single';
+  String? _selectedPreviousCrop1;
+  String? _selectedPreviousCrop2;
 
   bool _isLoadingDistricts = true;
   bool _isSubmitting = false;
@@ -52,6 +59,9 @@ class _AddFarmModalState extends State<AddFarmModal> {
     _selectedSoilType = widget.existingFarm?.soilType;
     _selectedWaterAvailability = widget.existingFarm?.waterAvailability;
     _selectedTargetSeason = widget.existingFarm?.targetSeason;
+    _selectedCroppingPattern = widget.existingFarm?.croppingPattern ?? 'single';
+    _selectedPreviousCrop1 = widget.existingFarm?.previousCrop1;
+    _selectedPreviousCrop2 = widget.existingFarm?.previousCrop2;
     _loadDistricts();
   }
 
@@ -100,6 +110,9 @@ class _AddFarmModalState extends State<AddFarmModal> {
             waterAvailability: _selectedWaterAvailability!,
             budget: double.parse(_budgetController.text),
             targetSeason: _selectedTargetSeason!,
+            croppingPattern: _selectedCroppingPattern,
+            previousCrop1: _selectedPreviousCrop1,
+            previousCrop2: _selectedPreviousCrop2,
           )
         : await farmProvider.addFarm(
             farmName: _farmNameController.text.trim(),
@@ -110,6 +123,9 @@ class _AddFarmModalState extends State<AddFarmModal> {
             waterAvailability: _selectedWaterAvailability!,
             budget: double.parse(_budgetController.text),
             targetSeason: _selectedTargetSeason!,
+            croppingPattern: _selectedCroppingPattern,
+            previousCrop1: _selectedPreviousCrop1,
+            previousCrop2: _selectedPreviousCrop2,
           );
 
     if (!mounted) return;
@@ -242,6 +258,35 @@ class _AddFarmModalState extends State<AddFarmModal> {
                           .toList(),
                       onChanged: (value) => setState(() => _selectedTargetSeason = value),
                       validator: (value) => value == null ? l10n.requiredValidation : null,
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedCroppingPattern,
+                      decoration: InputDecoration(labelText: l10n.croppingPatternLabel),
+                      items: _croppingPatterns
+                          .map((s) => DropdownMenuItem(value: s, child: Text(_capitalize(s))))
+                          .toList(),
+                      onChanged: (value) => setState(() => _selectedCroppingPattern = value ?? 'single'),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String?>(
+                      initialValue: _selectedPreviousCrop1,
+                      decoration: InputDecoration(labelText: l10n.previousCrop1Label),
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.noneCropOption)),
+                        ..._supportedCrops.map((c) => DropdownMenuItem(value: c, child: Text(_capitalize(c)))),
+                      ],
+                      onChanged: (value) => setState(() => _selectedPreviousCrop1 = value),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String?>(
+                      initialValue: _selectedPreviousCrop2,
+                      decoration: InputDecoration(labelText: l10n.previousCrop2Label),
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.noneCropOption)),
+                        ..._supportedCrops.map((c) => DropdownMenuItem(value: c, child: Text(_capitalize(c)))),
+                      ],
+                      onChanged: (value) => setState(() => _selectedPreviousCrop2 = value),
                     ),
                     if (_errorMessage != null) ...[
                       const SizedBox(height: 12),

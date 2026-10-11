@@ -153,6 +153,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get targetSeasonLabel => 'Target season';
 
   @override
+  String get croppingPatternLabel => 'Cropping pattern';
+
+  @override
+  String get previousCrop1Label => 'Last crop harvested';
+
+  @override
+  String get previousCrop2Label => 'Second-last crop harvested';
+
+  @override
+  String get noneCropOption => 'None / first cultivation';
+
+  @override
   String get requiredValidation => 'Required';
 
   @override
@@ -289,6 +301,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get selectCropHint =>
       'Select a crop to see seed cost, growing season, and profit estimate';
+
+  @override
+  String get cropPlanListTitle => 'Your cropping plan';
+
+  @override
+  String get selectCropPlanHint =>
+      'One crop per season — select a crop to see its cost and profit estimate';
 
   @override
   String get growingSeasonLabel => 'Growing season';

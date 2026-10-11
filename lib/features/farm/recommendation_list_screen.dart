@@ -11,29 +11,39 @@ class RecommendationListScreen extends StatelessWidget {
     required this.farmName,
     required this.topCrops,
     required this.budget,
+    required this.croppingPattern,
   });
 
   final String farmId;
   final String farmName;
   final List<RecommendedCrop> topCrops;
   final double budget;
+  final String croppingPattern;
+
+  bool get _isPlan => croppingPattern != 'single';
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.recommendationListTitle)),
+      appBar: AppBar(title: Text(_isPlan ? l10n.cropPlanListTitle : l10n.recommendationListTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            l10n.selectCropHint,
+            _isPlan ? l10n.selectCropPlanHint : l10n.selectCropHint,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 12),
           for (final crop in topCrops)
-            _CropListTile(farmId: farmId, farmName: farmName, crop: crop, budget: budget),
+            _CropListTile(
+              farmId: farmId,
+              farmName: farmName,
+              crop: crop,
+              budget: budget,
+              isPlan: _isPlan,
+            ),
         ],
       ),
     );
@@ -46,12 +56,14 @@ class _CropListTile extends StatelessWidget {
     required this.farmName,
     required this.crop,
     required this.budget,
+    required this.isPlan,
   });
 
   final String farmId;
   final String farmName;
   final RecommendedCrop crop;
   final double budget;
+  final bool isPlan;
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +78,20 @@ class _CropListTile extends StatelessWidget {
         contentPadding: const EdgeInsets.all(12),
         leading: CircleAvatar(
           backgroundColor: colorScheme.primaryContainer,
-          child: Text(
-            '${crop.rank}',
-            style: TextStyle(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold),
-          ),
+          child: isPlan && crop.season != null
+              ? Text(
+                  crop.season!,
+                  style: TextStyle(
+                    color: colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              : Text(
+                  '${crop.rank}',
+                  style: TextStyle(color: colorScheme.onPrimaryContainer, fontWeight: FontWeight.bold),
+                ),
         ),
         title: Text(cropName, style: Theme.of(context).textTheme.titleMedium),
         subtitle: Column(
@@ -81,6 +103,14 @@ class _CropListTile extends StatelessWidget {
                   ? '${l10n.netProfitLabel}: ${crop.netProfit!.toStringAsFixed(0)} BDT'
                   : l10n.profitComingSoonNote,
             ),
+            if (crop.rotationNote != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  crop.rotationNote!,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+                ),
+              ),
             if (isOverBudget)
               Padding(
                 padding: const EdgeInsets.only(top: 4),

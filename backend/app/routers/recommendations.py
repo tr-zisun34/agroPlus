@@ -11,7 +11,13 @@ from app.models.recommendation import Recommendation
 from app.models.recommendation_crop import RecommendationCrop
 from app.models.sample_point import SamplePoint
 from app.schemas.recommendation import CropDetailOut, RecommendationOut, RecommendationSummary, SamplePointIn
-from app.services.recommendation_service import get_crop_detail, get_profit_estimate, get_recommendation
+from app.services.recommendation_service import (
+    build_multi_crop_plan,
+    crops_at_rotation_limit,
+    get_crop_detail,
+    get_profit_estimate,
+    get_recommendation,
+)
 from app.services.sampling_service import required_points_for_area
 from app.services.weather_service import WeatherServiceError, fetch_current_conditions
 
@@ -173,28 +179,61 @@ async def upsert_point(
         if farm.district.center_lat is not None and farm.district.center_lng is not None:
             try:
                 conditions = await fetch_current_conditions(farm.district.center_lat, farm.district.center_lng)
-                top3 = get_recommendation(
-                    n=recommendation.composite_n,
-                    p=recommendation.composite_p,
-                    k=recommendation.composite_k,
-                    temperature=conditions["temperature"],
-                    humidity=conditions["humidity"],
-                    ph=recommendation.composite_ph,
-                    rainfall=conditions["rainfall"],
-                )
-                for rank, item in enumerate(top3, start=1):
-                    profit = get_profit_estimate(crop=item["crop"], size_acres=farm.size_acres, db=db)
-                    db.add(
-                        RecommendationCrop(
-                            recommendation_id=recommendation.id,
-                            rank=rank,
-                            crop=item["crop"],
-                            confidence=item["confidence"],
-                            yield_estimate=profit["yield_estimate"] if profit else None,
-                            net_profit=profit["net_profit"] if profit else None,
-                            total_cost=profit["total_cost"] if profit else None,
-                        )
+                previous_crops = [farm.previous_crop_1, farm.previous_crop_2]
+
+                if farm.cropping_pattern == "single":
+                    exclude_crops = crops_at_rotation_limit(previous_crops)
+                    top3 = get_recommendation(
+                        n=recommendation.composite_n,
+                        p=recommendation.composite_p,
+                        k=recommendation.composite_k,
+                        temperature=conditions["temperature"],
+                        humidity=conditions["humidity"],
+                        ph=recommendation.composite_ph,
+                        rainfall=conditions["rainfall"],
+                        exclude_crops=exclude_crops,
                     )
+                    for rank, item in enumerate(top3, start=1):
+                        profit = get_profit_estimate(crop=item["crop"], size_acres=farm.size_acres, db=db)
+                        db.add(
+                            RecommendationCrop(
+                                recommendation_id=recommendation.id,
+                                rank=rank,
+                                crop=item["crop"],
+                                confidence=item["confidence"],
+                                yield_estimate=profit["yield_estimate"] if profit else None,
+                                net_profit=profit["net_profit"] if profit else None,
+                                total_cost=profit["total_cost"] if profit else None,
+                            )
+                        )
+                else:
+                    plan = build_multi_crop_plan(
+                        n=recommendation.composite_n,
+                        p=recommendation.composite_p,
+                        k=recommendation.composite_k,
+                        temperature=conditions["temperature"],
+                        humidity=conditions["humidity"],
+                        ph=recommendation.composite_ph,
+                        rainfall=conditions["rainfall"],
+                        size_acres=farm.size_acres,
+                        pattern=farm.cropping_pattern,
+                        previous_crops=previous_crops,
+                        db=db,
+                    )
+                    for rank, item in enumerate(plan, start=1):
+                        db.add(
+                            RecommendationCrop(
+                                recommendation_id=recommendation.id,
+                                rank=rank,
+                                crop=item["crop"],
+                                confidence=item["confidence"],
+                                yield_estimate=item["yield_estimate"],
+                                net_profit=item["net_profit"],
+                                total_cost=item["total_cost"],
+                                season=item["season"],
+                                rotation_note=item["rotation_note"],
+                            )
+                        )
             except WeatherServiceError:
                 # Composite still saves; crops stay empty until the farmer retries (e.g. by
                 # re-editing a point), rather than failing the point save outright.

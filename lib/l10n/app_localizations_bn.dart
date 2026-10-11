@@ -153,6 +153,18 @@ class AppLocalizationsBn extends AppLocalizations {
   String get targetSeasonLabel => 'লক্ষ্য মৌসুম';
 
   @override
+  String get croppingPatternLabel => 'ফসল চক্র';
+
+  @override
+  String get previousCrop1Label => 'সর্বশেষ কাটা ফসল';
+
+  @override
+  String get previousCrop2Label => 'তার আগের ফসল';
+
+  @override
+  String get noneCropOption => 'কোনোটি না / প্রথমবার চাষ';
+
+  @override
   String get requiredValidation => 'আবশ্যক';
 
   @override
@@ -290,6 +302,13 @@ class AppLocalizationsBn extends AppLocalizations {
   @override
   String get selectCropHint =>
       'বীজের দাম, চাষের মৌসুম এবং লাভের হিসাব দেখতে একটি ফসল নির্বাচন করুন';
+
+  @override
+  String get cropPlanListTitle => 'আপনার ফসল চক্র পরিকল্পনা';
+
+  @override
+  String get selectCropPlanHint =>
+      'প্রতি মৌসুমে একটি ফসল — খরচ ও লাভের হিসাব দেখতে একটি ফসল নির্বাচন করুন';
 
   @override
   String get growingSeasonLabel => 'চাষের মৌসুম';
