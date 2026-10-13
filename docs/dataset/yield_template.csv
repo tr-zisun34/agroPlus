@@ -1,0 +1,39 @@
+crop,variety,product_bn,yield_value,yield_unit,area_unit,days_to_harvest,source,as_of_year,notes
+blackgram,split,মাশ কালাই (ভাঙা),,,,,,,
+blackgram,whole,মাশ কালাই (আস্ত),,,,,,,
+blackgram,whole_domestic,মাশ কালাই (আস্ত) দেশি,,,,,,,
+chickpea,domestic_premium,ছোলা দেশী-উন্নতমানের,,,,,,,
+chickpea,imported,ছোলা (আমদানীকৃত),,,,,,,
+chickpea,split_domestic,ছোলা (ভাঙা),,,,,,,
+chickpea,whole_domestic,ছোলা (আস্ত),,,,,,,
+lentil,domestic_split,মসুর ডাল -দেশি-ভাঙ্গা,,,,,,,
+lentil,domestic_whole,মসুর ডাল -দেশি-আস্ত,,,,,,,
+lentil,imported_premium,মশুর (আমদানীকৃত) উন্নতমানের,,,,,,,
+lentil,imported_standard,মশুর (আমদানীকৃত) সাধারণ মান,,,,,,,
+maize,,ভুট্টা,,,,,,,
+mungbean,domestic,মুগ ডাল (দেশি),,,,,,,
+mungbean,imported,মুগ ডাল (আমদানিকৃত),,,,,,,
+mungbean,small_domestic_premium,ছোট মুগ ডাল (দেশি) - উন্নত মানের,,,,,,,
+rice,amon_aromatic,ধান - আমন - সুগন্ধি (পোলাও),,,,,,,
+rice,amon_hybrid_coarse,ধান - আমন - হাইব্রিড - মোটা,,,,,,,
+rice,amon_hybrid_medium,ধান - আমন - হাইব্রিড - মাঝারি,,,,,,,
+rice,amon_local_coarse,ধান - আমন - দেশীয় - মোটা,,,,,,,
+rice,amon_local_fine,ধান - আমন - দেশীয় - সরু,,,,,,,
+rice,amon_local_medium,ধান - আমন - দেশীয় - মাঝারি,,,,,,,
+rice,boro_medium,ধান-মাঝারী-বোরো,,,,,,,
+pigeonpeas,,,,,,,,,optional — no DAM price yet, fill only if you have both
+mothbeans,,,,,,,,,optional — no DAM price yet, fill only if you have both
+kidneybeans,,,,,,,,,optional — no DAM price yet, fill only if you have both
+cotton,,,,,,,,,optional — no DAM price yet, fill only if you have both
+jute,,,,,,,,,optional — no DAM price yet, fill only if you have both
+coffee,,,,,,,,,optional — no DAM price yet, fill only if you have both
+banana,,,,,,,,,optional — no DAM price yet, fill only if you have both
+pomegranate,,,,,,,,,optional — no DAM price yet, fill only if you have both
+mango,,,,,,,,,optional — no DAM price yet, fill only if you have both
+grapes,,,,,,,,,optional — not a BD field crop, skip unless you disagree
+watermelon,,,,,,,,,optional — no DAM price yet, fill only if you have both
+muskmelon,,,,,,,,,optional — no DAM price yet, fill only if you have both
+apple,,,,,,,,,optional — not a BD field crop, skip unless you disagree
+orange,,,,,,,,,optional — no DAM price yet, fill only if you have both
+papaya,,,,,,,,,optional — DAM price here is unripe/vegetable papaya, not ripe fruit — skip unless you have a proper fruit price too
+coconut,,,,,,,,,optional — no DAM price yet, fill only if you have both

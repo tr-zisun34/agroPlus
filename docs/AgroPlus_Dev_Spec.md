@@ -46,22 +46,34 @@ FARM {
   uuid id PK
   uuid farmer_id FK -> FARMER.id
   string farm_name
-  string location
+  string location          -- free-text address/description
+  uuid district_id FK -> DISTRICT.id
   float size_acres
+  string soil_type         -- e.g. Clay, Loamy, Sandy, Silty
+  string water_availability -- Irrigated, Rain-fed, Limited
+  float budget
+  string target_season     -- Rabi, Aus, Aman
 }
 
 RECOMMENDATION {
   uuid id PK
   uuid farm_id FK -> FARM.id
   timestamp created_at
-  float composite_n
-  float composite_p
-  float composite_k
-  float composite_ph
-  string top_crop
+  string status         -- "in_progress" (points still being added) or "complete"
+  float composite_n     -- nullable until status = complete
+  float composite_p     -- nullable until status = complete
+  float composite_k     -- nullable until status = complete
+  float composite_ph    -- nullable until status = complete
+}
+
+RECOMMENDATION_CROP {
+  uuid id PK
+  uuid recommendation_id FK -> RECOMMENDATION.id
+  int rank               -- 1, 2, or 3
+  string crop
   float confidence
-  float yield_estimate
-  float net_profit
+  float yield_estimate   -- nullable — populated once the profit engine (§ deferred) exists
+  float net_profit       -- nullable — populated once the profit engine (§ deferred) exists
 }
 
 SAMPLE_POINT {
@@ -82,7 +94,7 @@ DISTRICT {
 }
 ```
 
-Relationships: `FARMER (1) --- (many) FARM`, `FARM (1) --- (many) RECOMMENDATION`, `RECOMMENDATION (1) --- (many) SAMPLE_POINT`. `FARM.location` stores the resolved `DISTRICT.name` (from either manual selection or GPS lookup) — this is the same key used by the `crop_region_price` and `crop_region_yield` lookup tables, so no translation layer is needed between location and profit calculation.
+Relationships: `FARMER (1) --- (many) FARM`, `FARM (1) --- (many) RECOMMENDATION`, `RECOMMENDATION (1) --- (many) SAMPLE_POINT`, `RECOMMENDATION (1) --- (many) RECOMMENDATION_CROP` (top-3 results). `FARM.district_id` (resolved from either manual selection or GPS lookup) is the same key used by the `crop_region_price` and `crop_region_yield` lookup tables — `FARM.location` is a separate free-text field for the farmer's own address/description and is never used for lookups.
 
 ### Location & weather architecture
 

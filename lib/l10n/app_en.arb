@@ -1,0 +1,183 @@
+{
+  "@@locale": "en",
+  "appTitle": "AgroPlus",
+  "loginHeadline": "Log in to your account",
+  "emailLabel": "Email",
+  "passwordLabel": "Password",
+  "emailRequired": "Email is required",
+  "passwordRequired": "Password is required",
+  "logInButton": "Log in",
+  "noAccountRegisterPrompt": "Don't have an account? Register",
+  "createAccountTitle": "Create account",
+  "nameLabel": "Name",
+  "phoneLabel": "Phone",
+  "nameRequired": "Name is required",
+  "phoneRequired": "Phone is required",
+  "passwordTooShort": "Password must be at least 8 characters",
+  "registerButton": "Register",
+  "dashboardTitle": "Dashboard",
+  "logoutTooltip": "Log out",
+  "addFarm": "Add land",
+  "emptyFarmsMessage": "You haven't added a land yet",
+  "profileLoadError": "Could not load your profile.",
+  "farmsLoadError": "Could not load your lands.",
+  "deleteFarmTitle": "Delete land?",
+  "deleteFarmContent": "This will permanently remove \"{farmName}\" and its data.",
+  "@deleteFarmContent": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "cancelButton": "Cancel",
+  "deleteButton": "Delete",
+  "deleteFarmTooltip": "Delete land",
+  "noChecksYet": "No checks yet",
+  "justNow": "Just now",
+  "daysAgo": "{count, plural, one{{count} day ago} other{{count} days ago}}",
+  "@daysAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hoursAgo": "{count, plural, one{{count} hour ago} other{{count} hours ago}}",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "closeTooltip": "Close",
+  "farmNameLabel": "Land name",
+  "locationLabel": "Location",
+  "locationHint": "Near Teesta canal, Kaunia",
+  "districtLabel": "District",
+  "areaLabel": "Area (acres)",
+  "areaHint": "4.0",
+  "soilTypeLabel": "Soil type",
+  "waterAvailabilityLabel": "Water availability",
+  "budgetLabel": "Budget (BDT)",
+  "budgetHint": "50000",
+  "targetSeasonLabel": "Target season",
+  "croppingPatternLabel": "Cropping pattern",
+  "previousCrop1Label": "Last crop harvested",
+  "previousCrop2Label": "Second-last crop harvested",
+  "noneCropOption": "None / first cultivation",
+  "requiredValidation": "Required",
+  "positiveNumberValidation": "Must be a positive number",
+  "languageToggleTooltip": "Switch language",
+  "farmProfileTitle": "Land profile",
+  "liveConditionsTitle": "Live conditions",
+  "recommendationTitle": "Recommendation",
+  "temperatureLabel": "Temperature",
+  "humidityLabel": "Humidity",
+  "rainfallLabel": "Rainfall",
+  "refreshTooltip": "Refresh",
+  "lastUpdatedLabel": "Last updated: {time}",
+  "@lastUpdatedLabel": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "minutesAgo": "{count, plural, one{{count} min ago} other{{count} min ago}}",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "conditionsLoadError": "Could not load live conditions.",
+  "forecastTitle": "7-day forecast",
+  "forecastLoadError": "Could not load the forecast.",
+  "farmDetailLoadError": "Could not load land details.",
+  "recommendationLoadError": "Could not load your recommendation.",
+  "savePointError": "Could not save this point. Please try again.",
+  "comingSoonMessage": "This feature is coming soon",
+  "soilReadingTitle": "Soil reading",
+  "addPointTitle": "Add point",
+  "editPointTitle": "Edit point",
+  "nitrogenLabel": "Nitrogen (N)",
+  "phosphorusLabel": "Phosphorus (P)",
+  "potassiumLabel": "Potassium (K)",
+  "phLabel": "pH",
+  "savePointButton": "Save",
+  "compositePendingMessage": "Add the remaining points to see your composite reading",
+  "centerPointLabel": "Center",
+  "cornerPointLabel": "Corner {number}",
+  "@cornerPointLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "quadrantPointLabel": "Quadrant {number}",
+  "@quadrantPointLabel": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "recommendationDisabledHint": "Add a soil reading below to unlock your recommendation",
+  "recommendationPipelinePendingMessage": "Could not generate a recommendation yet — try re-saving a point",
+  "bestCropsButton": "Best crops for my land",
+  "confidenceLabel": "Confidence",
+  "yieldEstimateLabel": "Yield estimate",
+  "netProfitLabel": "Net profit",
+  "profitComingSoonNote": "Profit estimate coming soon",
+  "recommendationListTitle": "Recommended crops",
+  "selectCropHint": "Select a crop to see seed cost, growing season, and profit estimate",
+  "cropPlanListTitle": "Your cropping plan",
+  "selectCropPlanHint": "One crop per season — select a crop to see its cost and profit estimate",
+  "growingSeasonLabel": "Growing season",
+  "whyThisCropButton": "Why this crop?",
+  "whyThisCropQuestion": "Why do you recommend {crop} for my land?",
+  "@whyThisCropQuestion": {
+    "placeholders": {
+      "crop": { "type": "String" }
+    }
+  },
+  "yieldAndCostTitle": "Yield & price",
+  "marketPriceLabel": "Market price",
+  "costBreakdownTitle": "Cost breakdown",
+  "seedCostLabel": "Seed cost",
+  "seedCostUnavailableNote": "Seed cost not available for this crop yet",
+  "fertilizerCostLabel": "Fertilizer cost",
+  "fertilizerCostUnavailableNote": "Fertilizer cost not available for this crop yet",
+  "otherCostLabel": "Other costs (labor, irrigation, land prep)",
+  "totalCostLabel": "Estimated total cost",
+  "overBudgetLabel": "Over budget",
+  "overBudgetWarning": "This exceeds your budget of {budget} BDT by {difference} BDT.",
+  "@overBudgetWarning": {
+    "placeholders": {
+      "budget": { "type": "String" },
+      "difference": { "type": "String" }
+    }
+  },
+  "profitEstimateTitle": "Profit estimate",
+  "grossRevenueLabel": "Gross revenue",
+  "cropDetailLoadError": "Could not load harvest details for this crop",
+  "chatWithAgentButton": "Chat with agent",
+  "farmPickerTitle": "Chat about which land?",
+  "farmPickerSubtitle": "The assistant will use this land's soil and weather data.",
+  "farmAssistantTitle": "Land assistant",
+  "chatGreeting": "Hi, I'm your land assistant for {farmName}. Ask me anything about your soil, weather, or what to plant this season.",
+  "@chatGreeting": {
+    "placeholders": {
+      "farmName": { "type": "String" }
+    }
+  },
+  "quickChipProfit": "Show profit breakdown",
+  "quickChipSoil": "Check soil condition",
+  "quickChipCrop": "Suggest another crop",
+  "messageInputHint": "Type a message",
+  "sendTooltip": "Send",
+  "chatErrorReply": "Sorry, I couldn't process that right now. Please try again.",
+  "newConversationTooltip": "New conversation",
+  "newConversationTitle": "Start new conversation?",
+  "newConversationContent": "This will clear your current chat history for this land.",
+  "startButton": "Start",
+  "newConversationError": "Could not start a new conversation. Please try again.",
+  "viewHistoryButton": "View history",
+  "recommendationHistoryTitle": "Recommendation history",
+  "noHistoryMessage": "No recommendations yet.",
+  "recommendationDetailTitle": "Recommendation detail",
+  "compositeReadingLabel": "Composite reading",
+  "editFarm": "Edit land",
+  "editFarmTooltip": "Edit land",
+  "updateFarmError": "Could not update land. Please try again."
+}
