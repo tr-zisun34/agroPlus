@@ -1,0 +1,418 @@
+<title>AgroPlus Overview Slide</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1280px;
+    height: 720px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #f3f8f1 0%, #e9f3e6 55%, #ddeee0 100%);
+    overflow: hidden;
+  }
+  .slide {
+    width: 1280px;
+    height: 720px;
+    position: relative;
+    padding: 22px 30px 14px 30px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- header ---------- */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .leaf-badge {
+    width: 46px; height: 46px;
+    background: #2d6a4f;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 3px 8px rgba(45,106,79,0.35);
+  }
+  .title-block h1 {
+    font-size: 27px;
+    color: #15351f;
+    letter-spacing: 0.3px;
+    line-height: 1;
+  }
+  .title-block .tagline {
+    font-size: 12.5px;
+    color: #3f5e49;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+  .header-right {
+    text-align: right;
+    font-size: 10.5px;
+    color: #4a6a53;
+    line-height: 1.5;
+  }
+  .header-right .course-pill {
+    display: inline-block;
+    background: #2d6a4f;
+    color: #fff;
+    font-size: 9.5px;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+  }
+
+  /* ---------- stack strip ---------- */
+  .stack-strip {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 13px;
+    flex-wrap: nowrap;
+  }
+  .stack-chip {
+    background: #ffffff;
+    border: 1px solid #c8d9c2;
+    color: #2d6a4f;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 4px 11px;
+    border-radius: 14px;
+    white-space: nowrap;
+  }
+
+  /* ---------- main grid ---------- */
+  .main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap: 16px;
+    min-height: 0;
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 9px;
+  }
+  .feature-card {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #dbe8d6;
+    padding: 10px 13px 11px 13px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(27,67,50,0.06);
+  }
+  .feature-top { display: flex; gap: 10px; align-items: flex-start; }
+  .feature-icon {
+    width: 32px; height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .feature-text h3 {
+    font-size: 13.5px;
+    color: #15351f;
+    margin-bottom: 3px;
+    line-height: 1.2;
+  }
+  .feature-text p {
+    font-size: 10.8px;
+    color: #4e6b57;
+    line-height: 1.32;
+  }
+  .feature-stat {
+    margin-top: 8px;
+    display: inline-block;
+    align-self: flex-start;
+    background: #f1f6ef;
+    border: 1px solid #dbe8d6;
+    color: #2d6a4f;
+    font-size: 9.3px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    padding: 3px 9px;
+    border-radius: 6px;
+  }
+
+  .ic-green { background: #dceee0; }
+  .ic-amber { background: #fdf0d8; }
+  .ic-blue  { background: #e2ebfa; }
+  .ic-teal  { background: #d9f0ef; }
+  .ic-pink  { background: #fae2ec; }
+  .ic-purple{ background: #e9e2fa; }
+
+  /* ---------- right column: architecture + principles ---------- */
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+  }
+
+  .flow-box {
+    background: #ffffff;
+    border: 1px solid #dbe8d6;
+    border-radius: 10px;
+    padding: 11px 13px 13px 13px;
+    box-shadow: 0 1px 3px rgba(27,67,50,0.06);
+  }
+  .flow-box h4 {
+    font-size: 11px;
+    color: #2d6a4f;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .flow-node {
+    background: #e9f3e6;
+    color: #1b4332;
+    font-size: 9.6px;
+    font-weight: 600;
+    padding: 5px 8px;
+    border-radius: 7px;
+    border: 1px solid #c8d9c2;
+    white-space: nowrap;
+  }
+  .flow-arrow { color: #7ba085; font-size: 12px; }
+  .flow-sub {
+    display: flex;
+    gap: 5px;
+    margin: 6px 0 0 18px;
+    flex-wrap: wrap;
+  }
+  .flow-node.small { font-size: 8.8px; padding: 4px 7px; background: #fdf3e3; border-color: #e7cf9f; color: #7a4e00; }
+
+  .principles {
+    background: #1b4332;
+    border-radius: 10px;
+    padding: 16px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .principles h4 {
+    font-size: 12px;
+    color: #a9d6b6;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+  }
+  .principle-item {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .principle-item:last-child { margin-bottom: 0; }
+  .principle-dot {
+    color: #74c69d;
+    font-size: 15px;
+    line-height: 1.2;
+  }
+  .principle-item p {
+    font-size: 11.8px;
+    color: #eef7f0;
+    line-height: 1.42;
+  }
+  .principle-item b { color: #bfe8cc; }
+
+  /* ---------- footer ---------- */
+  .footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9.3px;
+    color: #5a7563;
+    border-top: 1px solid #cfe0c9;
+    padding-top: 7px;
+  }
+  .footer .modules {
+    display: flex;
+    gap: 10px;
+  }
+  .footer .modules span { color: #2d6a4f; font-weight: 600; }
+</style>
+
+<div class="slide">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="leaf-badge">&#127807;</div>
+      <div class="title-block">
+        <h1>AgroPlus</h1>
+        <div class="tagline">Soil &amp; weather &rarr; grounded AI crop &amp; profit advisor for Bangladeshi farmers</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="course-pill">SE 801 &middot; SOFTWARE PROJECT LAB&ndash;III</div><br>
+      Md. Tuuhidur Rahman &nbsp;|&nbsp; Flutter + FastAPI + PostgreSQL
+    </div>
+  </div>
+
+  <div class="stack-strip">
+    <span class="stack-chip">Flutter (Android/iOS)</span>
+    <span class="stack-chip">FastAPI</span>
+    <span class="stack-chip">PostgreSQL</span>
+    <span class="stack-chip">XGBoost + Random Forest</span>
+    <span class="stack-chip">OpenAI Function Calling</span>
+    <span class="stack-chip">Open-Meteo</span>
+    <span class="stack-chip">BAMIS &middot; DAM &middot; BADC Data</span>
+    <span class="stack-chip">EN / বাং Localized</span>
+  </div>
+
+  <div class="main">
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-green">&#127793;</div>
+          <div class="feature-text">
+            <h3>Soil-Based Recommendation</h3>
+            <p>Tiered sampling &rarr; composite N/P/K/pH &rarr; ML-ranked top-3 crops, confidence-scored</p>
+          </div>
+        </div>
+        <div class="feature-stat">XGBoost + Random Forest ensemble</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-amber">&#128176;</div>
+          <div class="feature-text">
+            <h3>Itemized Profit Engine</h3>
+            <p>Seed + per-nutrient fertilizer + other cost, revenue and net profit, per acre</p>
+          </div>
+        </div>
+        <div class="feature-stat">Seed + Urea/TSP/MoP/Gypsum breakdown</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-blue">&#128260;</div>
+          <div class="feature-text">
+            <h3>Double / Triple Cropping</h3>
+            <p>Season-sequenced plan with automatic substitution when a season's best pick is blocked</p>
+          </div>
+        </div>
+        <div class="feature-stat">No crop grown &gt; 2&times; in a row</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-teal">&#129302;</div>
+          <div class="feature-text">
+            <h3>AI Farm Assistant</h3>
+            <p>Tool-calling chat grounded only in the land's real data &mdash; never fabricates a number</p>
+          </div>
+        </div>
+        <div class="feature-stat">6 grounding tools &middot; persistent per-land thread</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-pink">&#9925;</div>
+          <div class="feature-text">
+            <h3>Live Weather &amp; 7-Day Forecast</h3>
+            <p>Current conditions plus daily high/low temperature and rainfall outlook per district</p>
+          </div>
+        </div>
+        <div class="feature-stat">Open-Meteo, per-district coordinates</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-purple">&#128161;</div>
+          <div class="feature-text">
+            <h3>"Why This Crop?"</h3>
+            <p>Compares the land's actual soil/weather values against each crop's typical range</p>
+          </div>
+        </div>
+        <div class="feature-stat">One tap from crop detail &rarr; chat</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-amber">&#9888;&#65039;</div>
+          <div class="feature-text">
+            <h3>Budget-Aware Warnings</h3>
+            <p>Flags any crop whose estimated total cost exceeds the farmer's stated budget</p>
+          </div>
+        </div>
+        <div class="feature-stat">Shown on list &amp; detail screens</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-icon ic-green">&#128221;</div>
+          <div class="feature-text">
+            <h3>History &amp; Land Management</h3>
+            <p>Full CRUD on land profiles plus chronological recommendation history per land</p>
+          </div>
+        </div>
+        <div class="feature-stat">Edit, delete, re-sample anytime</div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <div class="flow-box">
+        <h4>Data Flow</h4>
+        <div class="flow-row">
+          <span class="flow-node">Soil Sample</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-node">ML Engine</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-node">Economics DB</span>
+        </div>
+        <div class="flow-row" style="margin-top:6px;">
+          <span class="flow-node">Live Weather</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-node">Recommendation / Plan</span>
+          <span class="flow-arrow">&rarr;</span>
+          <span class="flow-node">AI Chat</span>
+        </div>
+        <div class="flow-sub">
+          <span class="flow-node small">BAMIS</span>
+          <span class="flow-node small">DAM</span>
+          <span class="flow-node small">BADC</span>
+          <span class="flow-node small">Open-Meteo</span>
+        </div>
+      </div>
+
+      <div class="principles">
+        <h4>Design Principles</h4>
+        <div class="principle-item">
+          <span class="principle-dot">&#10003;</span>
+          <p><b>Grounded, not generative</b> &mdash; every number the assistant states comes from a real tool call, not model knowledge.</p>
+        </div>
+        <div class="principle-item">
+          <span class="principle-dot">&#10003;</span>
+          <p><b>Provenance over estimation</b> &mdash; yield/price/cost always traced to a named dataset.</p>
+        </div>
+        <div class="principle-item">
+          <span class="principle-dot">&#10003;</span>
+          <p><b>Rotation-safe by default</b> &mdash; the same exclusion rule applies everywhere crops are ranked.</p>
+        </div>
+        <div class="principle-item">
+          <span class="principle-dot">&#10003;</span>
+          <p><b>Component-based backend</b> &mdash; ML, economics, weather, and chat are independently replaceable services.</p>
+        </div>
+        <div class="principle-item">
+          <span class="principle-dot">&#10003;</span>
+          <p><b>One codebase, two languages</b> &mdash; Flutter + full English/Bangla localization, agent replies in-language.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>10 backend components &middot; 8 database entities &middot; 36 functional requirements &middot; 2 languages</div>
+    <div class="modules">
+      <span>Auth</span><span>Land Profiles</span><span>Soil Sampling</span><span>ML Engine</span><span>Economics</span><span>Weather</span><span>AI Chat</span>
+    </div>
+  </div>
+
+</div>
